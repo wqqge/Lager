@@ -1031,7 +1031,7 @@
                         
                         setTimeout(() => window.print(), 1000);
                     </script>
-                <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986a9db60088d364',t:'MTc1OTEzOTg0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+                <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986ab479c52adca2',t:'MTc1OTE0MDc3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
                 </html>
             `);
             
@@ -1159,15 +1159,14 @@
                 resultDiv.innerHTML = `
                     <div class="text-left">
                         <div class="flex items-center mb-4">
-                            ${item.photo ? `<img src="${item.photo}" class="w-16 h-16 object-cover rounded-lg mr-4">` : `<span class="text-4xl mr-4">${item.image}</span>`}
+                            ${item.photo ? `<img src="${item.photo}" class="w-16 h-16 object-cover rounded-lg mr-4" alt="${item.name}">` : `<span class="text-4xl mr-4">${item.image || '📦'}</span>`}
                             <div>
-                                <h3 class="text-lg font-bold text-gray-800">${item.name}</h3>
-                                <p class="text-gray-600">${item.category}</p>
-                                <p class="text-sm text-gray-500">${item.description}</p>
-                                ${item.effect ? `<div class="effect-preview text-white px-2 py-1 rounded text-xs mt-1">${item.effect}</div>` : ''}
+                                <h3 class="text-lg font-bold text-gray-800">${escapeHtml(item.name)}</h3>
+                                <p class="text-gray-600">${escapeHtml(item.category || 'Sonstiges')}</p>
+                                <p class="text-sm text-gray-500">${escapeHtml(item.description || '')}</p>
+                                ${item.effect ? `<div class="effect-preview text-white px-2 py-1 rounded text-xs mt-1">${escapeHtml(item.effect)}</div>` : ''}
                             </div>
                         </div>
-                        <div class="barcode mb-4"></div>
                         <div class="grid grid-cols-2 gap-4 text-sm mb-4">
                             <div class="bg-gray-50 p-3 rounded">
                                 <span class="text-gray-600">Bestand:</span>
@@ -1178,7 +1177,7 @@
                             </div>
                             <div class="bg-gray-50 p-3 rounded">
                                 <span class="text-gray-600">Preis:</span>
-                                <div class="font-bold">€${item.price.toFixed(2)}</div>
+                                <div class="font-bold">€${(item.price || 0).toFixed(2)}</div>
                             </div>
                             <div class="bg-gray-50 p-3 rounded">
                                 <span class="text-gray-600">Effektdauer:</span>
@@ -1186,7 +1185,7 @@
                             </div>
                             <div class="bg-gray-50 p-3 rounded">
                                 <span class="text-gray-600">Gesamtwert:</span>
-                                <div class="font-bold">€${(item.quantity * item.price).toFixed(2)}</div>
+                                <div class="font-bold">€${((item.quantity || 0) * (item.price || 0)).toFixed(2)}</div>
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2">
@@ -1204,8 +1203,8 @@
                     <div class="text-center text-red-600">
                         <div class="text-6xl mb-4">❌</div>
                         <p class="text-lg font-bold mb-2">Artikel nicht gefunden</p>
-                        <p class="text-sm text-gray-600 mb-4 font-mono bg-gray-100 p-2 rounded">${barcode}</p>
-                        <button onclick="addNewItemWithBarcode('${barcode}')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        <p class="text-sm text-gray-600 mb-4 font-mono bg-gray-100 p-2 rounded">${escapeHtml(barcode)}</p>
+                        <button onclick="addNewItemWithBarcode('${escapeHtml(barcode)}')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
                             ➕ Neuen Artikel anlegen
                         </button>
                     </div>
@@ -1220,18 +1219,26 @@
         function adjustStock(itemId, change) {
             const item = inventory.find(item => item.id === itemId);
             if (item) {
-                const oldQuantity = item.quantity;
-                item.quantity = Math.max(0, item.quantity + change);
+                const oldQuantity = item.quantity || 0;
+                item.quantity = Math.max(0, oldQuantity + change);
                 
                 if (saveInventory()) {
-                    scanBarcode();
+                    // Only call scanBarcode if we're on the scanner tab and have a barcode in the input
+                    const currentTab = document.querySelector('.tab-content:not(.hidden)');
+                    if (currentTab && currentTab.id === 'scanner-tab') {
+                        const barcodeInput = document.getElementById('barcode-input');
+                        if (barcodeInput && barcodeInput.value.trim() === item.barcode) {
+                            scanBarcode();
+                        }
+                    }
+                    
                     updateAllViews();
                     
                     const action = change > 0 ? 'hinzugefügt' : 'entfernt';
                     const amount = Math.abs(change);
                     showNotification(`${amount} Stück ${action}: ${item.name}`, 'success');
                     
-                    if (item.quantity <= item.minStock && oldQuantity > item.minStock) {
+                    if (item.quantity <= (item.minStock || 0) && oldQuantity > (item.minStock || 0)) {
                         showNotification(`⚠️ Niedriger Bestand: ${item.name}`, 'error');
                     }
                 }
@@ -1241,13 +1248,14 @@
         // Enhanced inventory table
         function updateInventoryTable() {
             const tableBody = document.getElementById('inventory-table');
-            const searchTerm = document.getElementById('search-inventory').value.toLowerCase();
+            const searchInput = document.getElementById('search-inventory');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
             
             const filteredInventory = inventory.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) ||
-                item.barcode.includes(searchTerm) ||
-                item.category.toLowerCase().includes(searchTerm) ||
-                item.description.toLowerCase().includes(searchTerm)
+                (item.name || '').toLowerCase().includes(searchTerm) ||
+                (item.barcode || '').includes(searchTerm) ||
+                (item.category || '').toLowerCase().includes(searchTerm) ||
+                (item.description || '').toLowerCase().includes(searchTerm)
             );
             
             if (filteredInventory.length === 0) {
@@ -1262,39 +1270,43 @@
             }
             
             tableBody.innerHTML = filteredInventory.map(item => {
-                const stockStatus = item.quantity <= item.minStock ? 'text-red-600' : 'text-green-600';
-                const statusBadge = item.quantity <= item.minStock ? 
+                const quantity = item.quantity || 0;
+                const minStock = item.minStock || 0;
+                const price = item.price || 0;
+                
+                const stockStatus = quantity <= minStock ? 'text-red-600' : 'text-green-600';
+                const statusBadge = quantity <= minStock ? 
                     'bg-red-100 text-red-800' : 
-                    item.quantity > item.minStock * 2 ? 
+                    quantity > minStock * 2 ? 
                         'bg-green-100 text-green-800' : 
                         'bg-yellow-100 text-yellow-800';
-                const statusText = item.quantity <= item.minStock ? 'Niedrig' : 
-                    item.quantity > item.minStock * 2 ? 'Gut' : 'Normal';
+                const statusText = quantity <= minStock ? 'Niedrig' : 
+                    quantity > minStock * 2 ? 'Gut' : 'Normal';
                 
                 return `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 py-3">
-                            ${item.photo ? `<img src="${item.photo}" class="image-preview">` : `<span class="text-2xl">${item.image}</span>`}
+                            ${item.photo ? `<img src="${item.photo}" class="image-preview" alt="${escapeHtml(item.name || '')}">` : `<span class="text-2xl">${item.image || '📦'}</span>`}
                         </td>
                         <td class="px-4 py-3">
                             <div>
-                                <div class="font-medium text-gray-900">${item.name}</div>
-                                <div class="text-sm text-gray-500">${item.category}</div>
-                                ${item.description ? `<div class="text-xs text-gray-400 mt-1">${item.description}</div>` : ''}
-                                ${item.effect ? `<div class="text-xs text-purple-600 mt-1">${item.effect}</div>` : ''}
+                                <div class="font-medium text-gray-900">${escapeHtml(item.name || '')}</div>
+                                <div class="text-sm text-gray-500">${escapeHtml(item.category || 'Sonstiges')}</div>
+                                ${item.description ? `<div class="text-xs text-gray-400 mt-1">${escapeHtml(item.description)}</div>` : ''}
+                                ${item.effect ? `<div class="text-xs text-purple-600 mt-1">${escapeHtml(item.effect)}</div>` : ''}
                             </div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="text-sm font-mono bg-gray-100 px-2 py-1 rounded">${item.barcode}</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 py-1 rounded">${escapeHtml(item.barcode || '')}</div>
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center">
-                                <span class="font-bold ${stockStatus}">${item.quantity}</span>
-                                <span class="text-xs text-gray-500 ml-1">/ ${item.minStock}</span>
+                                <span class="font-bold ${stockStatus}">${quantity}</span>
+                                <span class="text-xs text-gray-500 ml-1">/ ${minStock}</span>
                             </div>
                         </td>
                         <td class="px-4 py-3">
-                            <span class="font-medium">€${item.price.toFixed(2)}</span>
+                            <span class="font-medium">€${price.toFixed(2)}</span>
                         </td>
                         <td class="px-4 py-3">
                             <span class="text-sm">${item.duration || 0}s</span>
@@ -1411,38 +1423,48 @@
 
         // Enhanced reports
         function updateReports() {
-            const totalItems = inventory.reduce((sum, item) => sum + item.quantity, 0);
-            const totalValue = inventory.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-            const lowStockItems = inventory.filter(item => item.quantity <= item.minStock);
-            const categories = [...new Set(inventory.map(item => item.category))];
-            const avgDuration = inventory.filter(item => item.duration).reduce((sum, item, _, arr) => sum + item.duration / arr.length, 0);
+            const totalItems = inventory.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            const totalValue = inventory.reduce((sum, item) => sum + ((item.quantity || 0) * (item.price || 0)), 0);
+            const lowStockItems = inventory.filter(item => (item.quantity || 0) <= (item.minStock || 0));
+            const categories = [...new Set(inventory.map(item => item.category || 'Sonstiges'))];
+            const itemsWithDuration = inventory.filter(item => item.duration && item.duration > 0);
+            const avgDuration = itemsWithDuration.length > 0 ? 
+                itemsWithDuration.reduce((sum, item) => sum + item.duration, 0) / itemsWithDuration.length : 0;
             
-            document.getElementById('total-items').textContent = totalItems;
-            document.getElementById('total-value').textContent = `€${totalValue.toFixed(2)}`;
-            document.getElementById('low-stock-count').textContent = lowStockItems.length;
-            document.getElementById('category-count').textContent = categories.length;
-            document.getElementById('avg-duration').textContent = `${avgDuration.toFixed(1)}s`;
+            const totalItemsEl = document.getElementById('total-items');
+            const totalValueEl = document.getElementById('total-value');
+            const lowStockCountEl = document.getElementById('low-stock-count');
+            const categoryCountEl = document.getElementById('category-count');
+            const avgDurationEl = document.getElementById('avg-duration');
+            
+            if (totalItemsEl) totalItemsEl.textContent = totalItems;
+            if (totalValueEl) totalValueEl.textContent = `€${totalValue.toFixed(2)}`;
+            if (lowStockCountEl) lowStockCountEl.textContent = lowStockItems.length;
+            if (categoryCountEl) categoryCountEl.textContent = categories.length;
+            if (avgDurationEl) avgDurationEl.textContent = `${avgDuration.toFixed(1)}s`;
             
             const lowStockDiv = document.getElementById('low-stock-items');
-            if (lowStockItems.length > 0) {
-                lowStockDiv.innerHTML = lowStockItems.map(item => `
-                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
-                        <div class="flex items-center">
-                            ${item.photo ? `<img src="${item.photo}" class="w-8 h-8 object-cover rounded mr-3">` : `<span class="text-xl mr-3">${item.image}</span>`}
-                            <div>
-                                <div class="font-medium">${item.name}</div>
-                                <div class="text-sm text-gray-600">Bestand: ${item.quantity} / Min: ${item.minStock}</div>
-                                <div class="text-xs text-gray-500">${item.category}</div>
+            if (lowStockDiv) {
+                if (lowStockItems.length > 0) {
+                    lowStockDiv.innerHTML = lowStockItems.map(item => `
+                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
+                            <div class="flex items-center">
+                                ${item.photo ? `<img src="${item.photo}" class="w-8 h-8 object-cover rounded mr-3" alt="${escapeHtml(item.name || '')}">` : `<span class="text-xl mr-3">${item.image || '📦'}</span>`}
+                                <div>
+                                    <div class="font-medium">${escapeHtml(item.name || '')}</div>
+                                    <div class="text-sm text-gray-600">Bestand: ${item.quantity || 0} / Min: ${item.minStock || 0}</div>
+                                    <div class="text-xs text-gray-500">${escapeHtml(item.category || 'Sonstiges')}</div>
+                                </div>
                             </div>
+                            <button onclick="showTab('scanner'); document.getElementById('barcode-input').value='${escapeHtml(item.barcode || '')}'; scanBarcode();" 
+                                    class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
+                                Auffüllen
+                            </button>
                         </div>
-                        <button onclick="showTab('scanner'); document.getElementById('barcode-input').value='${item.barcode}'; scanBarcode();" 
-                                class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
-                            Auffüllen
-                        </button>
-                    </div>
-                `).join('');
-            } else {
-                lowStockDiv.innerHTML = '<p class="text-gray-500 text-center py-4">✅ Alle Artikel haben ausreichend Bestand</p>';
+                    `).join('');
+                } else {
+                    lowStockDiv.innerHTML = '<p class="text-gray-500 text-center py-4">✅ Alle Artikel haben ausreichend Bestand</p>';
+                }
             }
         }
 
@@ -1460,6 +1482,13 @@
         }
 
         // Utility functions
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function getCategoryEmoji(category) {
             const emojis = {
                 'Raketen': '🚀',
@@ -1567,17 +1596,30 @@
         }
 
         // Event listeners
-        document.getElementById('search-inventory').addEventListener('input', updateInventoryTable);
-        document.getElementById('barcode-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                scanBarcode();
+        function setupEventListeners() {
+            const searchInput = document.getElementById('search-inventory');
+            if (searchInput) {
+                searchInput.addEventListener('input', updateInventoryTable);
             }
-        });
-        document.getElementById('stocktaking-barcode').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                recordStockCount();
+            
+            const barcodeInput = document.getElementById('barcode-input');
+            if (barcodeInput) {
+                barcodeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        scanBarcode();
+                    }
+                });
             }
-        });
+            
+            const stocktakingInput = document.getElementById('stocktaking-barcode');
+            if (stocktakingInput) {
+                stocktakingInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        recordStockCount();
+                    }
+                });
+            }
+        }
 
         // Cloud functions (existing)
         function exportToCloud() {
@@ -2063,18 +2105,20 @@
                         return;
                     }
                     
+                    const category = mappings.category !== undefined ? (row[mappings.category]?.trim() || 'Sonstiges') : 'Sonstiges';
+                    
                     const newItem = {
                         id: Date.now() + Math.random() + index,
                         name: name,
                         barcode: barcode,
                         quantity: Math.max(0, parseInt(row[mappings.quantity]) || 0),
                         price: Math.max(0, parseFloat(row[mappings.price]) || 0),
-                        category: mappings.category !== undefined ? (row[mappings.category]?.trim() || 'Sonstiges') : 'Sonstiges',
+                        category: category,
                         minStock: mappings.minStock !== undefined ? Math.max(0, parseInt(row[mappings.minStock]) || 5) : 5,
                         description: mappings.description !== undefined ? (row[mappings.description]?.trim() || '') : '',
                         duration: mappings.duration !== undefined ? (parseFloat(row[mappings.duration]) || null) : null,
                         effect: mappings.effect !== undefined ? (row[mappings.effect]?.trim() || '') : '',
-                        image: getCategoryEmoji(mappings.category !== undefined ? (row[mappings.category]?.trim() || 'Sonstiges') : 'Sonstiges'),
+                        image: getCategoryEmoji(category),
                         photo: null
                     };
                     
@@ -2151,6 +2195,7 @@
         // Initialize application
         function initializeApp() {
             try {
+                setupEventListeners();
                 updateAllViews();
                 showNotification('Pyrotechnik Lager Manager Pro geladen', 'success');
             } catch (error) {
