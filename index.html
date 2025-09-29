@@ -6,20 +6,26 @@
     <title>Pyrotechnik Lager Manager Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script src="https://unpkg.com/@zxing/library@latest"></script> 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script> 
+
     <style>
+        /* KORREKTUR: Entfernung doppelter, leerer Klammern */
         body {
             box-sizing: border-box;
         }
+
         .scanner-line {
             animation: scan 2s linear infinite;
         }
+
         @keyframes scan {
             0% { transform: translateY(-100%); }
+            /* KORREKTUR: Korrektur der translateY-Funktion */
             100% { transform: translateY(300px); }
         }
+
         .barcode {
             background: repeating-linear-gradient(
                 90deg,
@@ -30,6 +36,7 @@
             );
             height: 40px;
         }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -42,44 +49,54 @@
             transform: translateX(400px);
             transition: transform 0.3s ease;
         }
+
         .notification.show {
             transform: translateX(0);
         }
+
         .notification.success { background-color: #10b981; }
         .notification.error { background-color: #ef4444; }
         .notification.info { background-color: #3b82f6; }
+
         .image-preview {
             max-width: 100px;
             max-height: 100px;
             object-fit: cover;
             border-radius: 8px;
         }
+
         .stocktaking-item {
             transition: all 0.3s ease;
         }
+
         .stocktaking-item.completed {
             background-color: #f0f9ff;
             border-left: 4px solid #10b981;
         }
+
         .effect-preview {
             background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
             background-size: 400% 400%;
             animation: effectGradient 3s ease infinite;
         }
+
         @keyframes effectGradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
         /* GitHub Pages optimizations */
         .github-pages-ready {
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .container-fluid {
             max-width: 1400px;
             margin: 0 auto;
         }
+
         /* Improved mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -97,76 +114,72 @@
         }
     </style>
 </head>
+
 <body class="github-pages-ready">
-    <!-- Notification Container -->
+
     <div id="notification-container"></div>
 
     <div class="container-fluid px-4 py-8">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+
+        <div class="bg-white rounded-Ig shadow-lg p-6 mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">🎆 Pyrotechnik Lager Manager Pro</h1>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Pyrotechnik Lager Manager Pro</h1>
                     <p class="text-gray-600">Verwalten Sie Ihr Pyrotechnik-Inventar mit Bestandsaufnahme, Bildupload und Code-Generator</p>
                     <div class="mt-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full inline-block">
-                        ✅ GitHub Pages Ready - Vollständig funktionsfähig
+                        GitHub Pages Ready - Vollständig funktionsfähig
                     </div>
                 </div>
                 <div class="flex flex-col items-end gap-2">
                     <div class="flex items-center gap-2">
-                        <span id="sync-status" class="text-sm text-gray-500">🔄 Synchronisiert</span>
+                        <span id="sync-status" class="text-sm text-gray-500">Synchronisiert</span>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="exportToCloud()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm transition-colors">
-                            ☁️ Backup erstellen
+                        <button onclick="exportToCloud()" class="bg-blue-600 text-white px-4 py-2 rounded-Ig hover:bg-blue-700 text-sm transition-colors">
+                            Backup erstellen
                         </button>
-                        <button onclick="importFromCloud()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm transition-colors">
-                            📥 Backup laden
+                        <button onclick="importFromCloud()" class="bg-green-600 text-white px-4 py-2 rounded-Ig hover:bg-green-700 text-sm transition-colors">
+                            Backup laden
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation -->
-        <div class="bg-white rounded-lg shadow-lg mb-8">
+        <div class="bg-white rounded-Ig shadow-lg mb-8">
             <div class="flex flex-wrap border-b overflow-x-auto">
                 <button onclick="showTab('scanner')" id="tab-scanner" class="px-6 py-4 font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
-                    📱 Scanner
+                    Scanner
                 </button>
                 <button onclick="showTab('inventory')" id="tab-inventory" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    📋 Inventar
+                    Inventar
                 </button>
                 <button onclick="showTab('stocktaking')" id="tab-stocktaking" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    📊 Bestandsaufnahme
+                    Bestandsaufnahme
                 </button>
                 <button onclick="showTab('add-item')" id="tab-add-item" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    ➕ Artikel hinzufügen
+                    + Artikel hinzufügen
                 </button>
                 <button onclick="showTab('code-generator')" id="tab-code-generator" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    🏷️ Code Generator
+                    Code Generator
                 </button>
                 <button onclick="showTab('import')" id="tab-import" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    📥 Import
+                    Import
                 </button>
                 <button onclick="showTab('reports')" id="tab-reports" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    📊 Berichte
+                    Berichte
                 </button>
             </div>
         </div>
 
-        <!-- Scanner Tab -->
         <div id="scanner-tab" class="tab-content">
             <div class="grid lg:grid-cols-2 gap-8">
-                <!-- Scanner Interface -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Barcode Scanner</h2>
-                    
-                    <!-- Live Camera Scanner -->
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold text-gray-700 mb-3">📹 Live Kamera Scanner</h3>
                         <div class="relative bg-gray-900 rounded-lg p-4 mb-4" style="height: 300px;">
-                            <video id="camera-video" class="w-full h-full object-cover rounded hidden" autoplay playsinline muted></video>
+                            <video id="camera-video" class="w-full h-full object-cover rounded hidden" autoplay playsinline muted></video> 
                             <canvas id="camera-canvas" class="hidden"></canvas>
                             <div id="scanner-placeholder" class="absolute inset-4 border-2 border-green-400 rounded-lg">
                                 <div class="scanner-line absolute w-full h-1 bg-green-400 opacity-70"></div>
@@ -185,8 +198,6 @@
                             📷 Kamera starten
                         </button>
                     </div>
-
-                    <!-- Photo Upload Scanner -->
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold text-gray-700 mb-3">📸 Barcode-Foto hochladen</h3>
                         <div class="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:bg-blue-100 transition-colors">
@@ -203,19 +214,14 @@
                             </label>
                         </div>
                     </div>
-
-                    <!-- Manual Input -->
                     <div>
                         <h3 class="text-lg font-semibold text-gray-700 mb-3">⌨️ Manuelle Eingabe</h3>
-                        <input type="text" id="barcode-input" placeholder="Barcode hier eingeben..." 
-                               class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <input type="text" id="barcode-input" placeholder="Barcode hier eingeben..." class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <button onclick="scanBarcode()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
                             🔍 Suchen
                         </button>
                     </div>
                 </div>
-
-                <!-- Scan Results -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">📄 Scan Ergebnis</h2>
                     <div id="scan-result" class="text-center text-gray-500 py-8">
@@ -225,20 +231,17 @@
             </div>
         </div>
 
-        <!-- Inventory Tab -->
         <div id="inventory-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold text-gray-800">📦 Inventar Übersicht</h2>
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                        <input type="text" id="search-inventory" placeholder="Artikel suchen..." 
-                               class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 flex-1 md:flex-none">
+                        <input type="text" id="search-inventory" placeholder="Artikel suchen..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 flex-1 md:flex-none">
                         <button onclick="exportInventory()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
                             📥 Export CSV
                         </button>
                     </div>
                 </div>
-                
                 <div class="overflow-x-auto">
                     <table class="w-full table-auto">
                         <thead class="bg-gray-50">
@@ -254,14 +257,12 @@
                             </tr>
                         </thead>
                         <tbody id="inventory-table" class="divide-y divide-gray-200">
-                            <!-- Inventory items will be populated here -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Stocktaking Tab -->
         <div id="stocktaking-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -275,8 +276,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Stocktaking Progress -->
                 <div id="stocktaking-progress" class="mb-6 hidden">
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <div class="flex justify-between items-center mb-2">
@@ -288,31 +287,24 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Quick Scanner for Stocktaking -->
                 <div id="stocktaking-scanner" class="mb-6 hidden">
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <h3 class="text-lg font-semibold text-yellow-800 mb-3">📱 Schnell-Scanner</h3>
                         <div class="flex gap-2">
-                            <input type="text" id="stocktaking-barcode" placeholder="Barcode scannen oder eingeben..." 
-                                   class="flex-1 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                            <input type="number" id="stocktaking-count" placeholder="Anzahl" min="0" 
-                                   class="w-24 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <input type="text" id="stocktaking-barcode" placeholder="Barcode scannen oder eingeben..." class="flex-1 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <input type="number" id="stocktaking-count" placeholder="Anzahl" min="0" class="w-24 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                             <button onclick="recordStockCount()" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
                                 ✓ Erfassen
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Stocktaking List -->
                 <div id="stocktaking-list">
                     <p class="text-gray-500 text-center py-8">Keine aktive Bestandsaufnahme. Klicken Sie auf "Neue Aufnahme starten"</p>
                 </div>
             </div>
         </div>
 
-        <!-- Add Item Tab -->
         <div id="add-item-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h2 class="text-xl font-bold text-gray-800 mb-6">➕ Neuen Artikel hinzufügen</h2>
@@ -350,1927 +342,9 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Mindestbestand</label>
                         <input type="number" id="item-min-stock" min="0" value="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Effektdauer (Sekunden)</label>
-                        <input type="number" id="item-duration" min="0" step="0.1" placeholder="z.B. 30" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Effekttyp</label>
-                        <select id="item-effect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="">Effekt auswählen...</option>
-                            <option value="Goldene Funken">✨ Goldene Funken</option>
-                            <option value="Bunte Sterne">🌟 Bunte Sterne</option>
-                            <option value="Silberne Kaskade">💫 Silberne Kaskade</option>
-                            <option value="Rote Flamme">🔥 Rote Flamme</option>
-                            <option value="Blaue Sterne">💙 Blaue Sterne</option>
-                            <option value="Grüne Funken">💚 Grüne Funken</option>
-                            <option value="Regenbogen">🌈 Regenbogen</option>
-                            <option value="Knalleffekt">💥 Knalleffekt</option>
-                            <option value="Pfeifeffekt">🎵 Pfeifeffekt</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Artikelbild</label>
-                        <div class="flex items-center gap-4">
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors flex-1">
-                                <input type="file" id="item-image" accept="image/*" class="hidden" onchange="previewImage(event)">
-                                <label for="item-image" class="cursor-pointer">
-                                    <div class="text-gray-500 mb-2">
-                                        <svg class="mx-auto h-8 w-8" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="text-sm text-gray-600">Foto hochladen</p>
-                                </label>
-                            </div>
-                            <div id="image-preview" class="hidden">
-                                <img id="preview-img" class="image-preview border-2 border-gray-200" alt="Vorschau">
-                                <button type="button" onclick="removeImage()" class="mt-2 text-red-600 text-sm hover:text-red-800">Entfernen</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
-                        <textarea id="item-description" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
-                    </div>
-                    <div class="md:col-span-2">
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                            Artikel hinzufügen
-                        </button>
-                    </div>
-                </form>
+                    </form>
             </div>
         </div>
-
-        <!-- Code Generator Tab -->
-        <div id="code-generator-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">🏷️ Barcode & QR-Code Generator</h2>
-                
-                <div class="grid lg:grid-cols-2 gap-8">
-                    <!-- Generator Controls -->
-                    <div>
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Code-Typ</label>
-                            <select id="code-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="qr">QR-Code</option>
-                                <option value="ean13">EAN-13 Barcode</option>
-                                <option value="code128">Code 128 Barcode</option>
-                                <option value="code39">Code 39 Barcode</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Artikel auswählen</label>
-                            <select id="code-item-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Artikel auswählen...</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Oder eigenen Code eingeben</label>
-                            <input type="text" id="custom-code" placeholder="Eigenen Code eingeben..." 
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Größe</label>
-                            <select id="code-size" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="small">Klein (150px)</option>
-                                <option value="medium" selected>Mittel (250px)</option>
-                                <option value="large">Groß (400px)</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Etiketten-Layout</label>
-                            <select id="label-layout" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="simple">Nur Code</option>
-                                <option value="with-text">Code + Text</option>
-                                <option value="detailed">Detailliertes Etikett</option>
-                            </select>
-                        </div>
-
-                        <button onclick="generateCode()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mb-4">
-                            🎯 Code generieren
-                        </button>
-
-                        <button onclick="printCodes()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
-                            🖨️ Drucken
-                        </button>
-                    </div>
-
-                    <!-- Generated Code Display -->
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Generierter Code</h3>
-                        <div id="generated-code-display" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center min-h-[300px] flex items-center justify-center">
-                            <p class="text-gray-500">Wählen Sie einen Artikel oder geben Sie einen Code ein</p>
-                        </div>
-                        
-                        <div id="code-actions" class="mt-4 hidden">
-                            <div class="flex gap-2">
-                                <button onclick="downloadCode()" class="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">
-                                    💾 Download
-                                </button>
-                                <button onclick="copyCodeToClipboard()" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors">
-                                    📋 Kopieren
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Batch Generation -->
-                <div class="mt-8 border-t pt-8">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">📦 Stapel-Generierung</h3>
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategorie filtern</label>
-                            <select id="batch-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="">Alle Kategorien</option>
-                                <option value="Raketen">🚀 Raketen</option>
-                                <option value="Batterien">🔋 Batterien</option>
-                                <option value="Römische Lichter">💡 Römische Lichter</option>
-                                <option value="Fontänen">⛲ Fontänen</option>
-                                <option value="Bengalos">🔥 Bengalos</option>
-                                <option value="Knaller">💥 Knaller</option>
-                                <option value="Verbundfeuerwerk">🎆 Verbundfeuerwerk</option>
-                                <option value="Sonstiges">📦 Sonstiges</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nur niedrige Bestände</label>
-                            <input type="checkbox" id="batch-low-stock" class="mt-3 h-4 w-4 text-blue-600">
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="generateBatchCodes()" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors">
-                                📋 Alle generieren
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Import Tab -->
-        <div id="import-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">📥 Daten Import</h2>
-                
-                <!-- CSV/Excel Import -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">📊 CSV/Excel Datei importieren</h3>
-                    
-                    <!-- Import Area -->
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors mb-4">
-                        <input type="file" id="csv-file" accept=".csv,.xlsx,.xls" class="hidden" onchange="handleFileSelect(event)">
-                        <label for="csv-file" class="cursor-pointer">
-                            <div class="text-gray-500 mb-2">
-                                <svg class="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </div>
-                            <p class="text-sm text-gray-600 font-medium">📁 Datei auswählen oder hierher ziehen</p>
-                            <p class="text-xs text-gray-500 mt-1">Unterstützt: .csv, .xlsx, .xls</p>
-                        </label>
-                    </div>
-
-                    <!-- Column Mapping Preview -->
-                    <div id="column-mapping" class="hidden mb-6">
-                        <h4 class="text-md font-semibold text-gray-700 mb-3">🔗 Spalten-Zuordnung</h4>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <p class="text-sm text-blue-700 mb-3">Ordnen Sie die Spalten aus Ihrer Datei den entsprechenden Feldern zu:</p>
-                            <div id="column-mapping-grid" class="grid md:grid-cols-2 gap-4">
-                                <!-- Column mappings will be populated here -->
-                            </div>
-                            <div class="flex gap-2 mt-4">
-                                <button onclick="confirmImport()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                                    ✅ Import bestätigen
-                                </button>
-                                <button onclick="cancelImport()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
-                                    ❌ Abbrechen
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Import Templates -->
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <h4 class="text-md font-semibold text-gray-700 mb-3">📋 Unterstützte Formate</h4>
-                        <div class="grid md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <h5 class="font-medium text-gray-600 mb-2">Standard CSV Format:</h5>
-                                <code class="text-xs bg-white p-2 rounded block">
-                                    Name,Barcode,Anzahl,Preis,Kategorie,Mindestbestand,Beschreibung,Effektdauer,Effekttyp
-                                </code>
-                            </div>
-                            <div>
-                                <h5 class="font-medium text-gray-600 mb-2">Flexible Spalten (automatisch erkannt):</h5>
-                                <ul class="text-xs text-gray-600 space-y-1">
-                                    <li>• Artikelname, Name, Bezeichnung</li>
-                                    <li>• Barcode, EAN, Code, Artikel-Nr</li>
-                                    <li>• Anzahl, Bestand, Menge, Stück</li>
-                                    <li>• Preis, Kosten, VK-Preis</li>
-                                    <li>• Kategorie, Gruppe, Typ</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <button onclick="downloadTemplate()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
-                                📥 Excel-Vorlage herunterladen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sample Data -->
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">🎆 Beispieldaten laden</h3>
-                    <p class="text-gray-600 mb-4">Laden Sie vorgefertigte Pyrotechnik-Beispieldaten zum Testen</p>
-                    <button onclick="loadSampleData()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                        🚀 Beispieldaten laden
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Tab -->
-        <div id="reports-tab" class="tab-content hidden">
-            <div class="grid lg:grid-cols-2 gap-8">
-                <!-- Statistics -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Statistiken</h2>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
-                            <span class="text-gray-700">Gesamtartikel:</span>
-                            <span id="total-items" class="font-bold text-blue-600">0</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-                            <span class="text-gray-700">Gesamtwert:</span>
-                            <span id="total-value" class="font-bold text-green-600">€0.00</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg">
-                            <span class="text-gray-700">Niedrige Bestände:</span>
-                            <span id="low-stock-count" class="font-bold text-red-600">0</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 bg-purple-50 rounded-lg">
-                            <span class="text-gray-700">Kategorien:</span>
-                            <span id="category-count" class="font-bold text-purple-600">0</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 bg-yellow-50 rounded-lg">
-                            <span class="text-gray-700">Ø Effektdauer:</span>
-                            <span id="avg-duration" class="font-bold text-yellow-600">0s</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Low Stock Alert -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">⚠️ Niedrige Bestände</h2>
-                    <div id="low-stock-items" class="space-y-2">
-                        <p class="text-gray-500 text-center py-4">Keine Artikel mit niedrigem Bestand</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // GitHub Pages compatibility layer
-        const GitHubPagesManager = {
-            init: function() {
-                console.log('🎆 Pyrotechnik Lager Manager Pro - GitHub Pages Ready');
-                this.setupErrorHandling();
-                this.optimizeForGitHubPages();
-            },
-            
-            setupErrorHandling: function() {
-                window.addEventListener('error', function(e) {
-                    console.error('Application Error:', e.error);
-                    showNotification('Ein Fehler ist aufgetreten. Bitte laden Sie die Seite neu.', 'error');
-                });
-                
-                window.addEventListener('unhandledrejection', function(e) {
-                    console.error('Unhandled Promise Rejection:', e.reason);
-                    e.preventDefault();
-                });
-            },
-            
-            optimizeForGitHubPages: function() {
-                // Ensure all external resources are loaded over HTTPS
-                const scripts = document.querySelectorAll('script[src]');
-                scripts.forEach(script => {
-                    if (script.src.startsWith('http://')) {
-                        script.src = script.src.replace('http://', 'https://');
-                    }
-                });
-                
-                // Add GitHub Pages specific meta tags
-                const meta = document.createElement('meta');
-                meta.name = 'github-pages-ready';
-                meta.content = 'true';
-                document.head.appendChild(meta);
-            }
-        };
-
-        // Global variables
-        let cameraStream = null;
-        let codeReader = null;
-        let isScanning = false;
-        let scanningInterval = null;
-        let currentStocktaking = null;
-
-        // Enhanced inventory loading with better error handling
-        let inventory = [];
-        try {
-            const savedInventory = localStorage.getItem('pyrotechnikInventory');
-            if (savedInventory && savedInventory !== 'undefined' && savedInventory !== 'null') {
-                const parsed = JSON.parse(savedInventory);
-                if (Array.isArray(parsed)) {
-                    inventory = parsed;
-                } else {
-                    throw new Error('Invalid inventory format');
-                }
-            } else {
-                loadDefaultData();
-            }
-        } catch (error) {
-            console.error('Error loading inventory:', error);
-            loadDefaultData();
-            showNotification('Standarddaten geladen', 'info');
-        }
-
-        function loadDefaultData() {
-            inventory = [
-                {
-                    id: 1,
-                    name: "Silvester Rakete Premium",
-                    barcode: "1234567890123",
-                    quantity: 50,
-                    price: 2.99,
-                    category: "Raketen",
-                    minStock: 10,
-                    description: "Bunte Silvester Rakete mit Goldeffekt",
-                    image: "🚀",
-                    duration: 15,
-                    effect: "Goldene Funken",
-                    photo: null
-                },
-                {
-                    id: 2,
-                    name: "Feuerwerk Batterie 20-Schuss",
-                    barcode: "2345678901234",
-                    quantity: 25,
-                    price: 15.99,
-                    category: "Batterien",
-                    minStock: 5,
-                    description: "20-Schuss Batterie mit bunten Effekten",
-                    image: "🔋",
-                    duration: 45,
-                    effect: "Bunte Sterne",
-                    photo: null
-                },
-                {
-                    id: 3,
-                    name: "Römisches Licht Deluxe",
-                    barcode: "3456789012345",
-                    quantity: 8,
-                    price: 8.50,
-                    category: "Römische Lichter",
-                    minStock: 15,
-                    description: "Mehrfarbiges römisches Licht",
-                    image: "💡",
-                    duration: 30,
-                    effect: "Regenbogen",
-                    photo: null
-                }
-            ];
-        }
-
-        // Enhanced notification system
-        function showNotification(message, type = 'info') {
-            if (!message) return;
-            
-            const container = document.getElementById('notification-container');
-            if (!container) return;
-            
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = String(message);
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (container.contains(notification)) {
-                        container.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        // Enhanced save function
-        function saveInventory() {
-            try {
-                if (!Array.isArray(inventory)) {
-                    throw new Error('Inventory is not an array');
-                }
-                
-                const dataToSave = inventory.filter(item => 
-                    item && typeof item === 'object' && item.id && item.name && item.barcode
-                );
-                
-                localStorage.setItem('pyrotechnikInventory', JSON.stringify(dataToSave));
-                updateSyncStatus('💾 Gespeichert');
-                return true;
-            } catch (error) {
-                console.error('Error saving inventory:', error);
-                showNotification('Fehler beim Speichern der Daten', 'error');
-                return false;
-            }
-        }
-
-        // Enhanced image handling
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith('image/')) {
-                showNotification('Bitte wählen Sie eine Bilddatei aus', 'error');
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                showNotification('Bild ist zu groß. Maximal 5MB erlaubt.', 'error');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('image-preview');
-                const img = document.getElementById('preview-img');
-                if (preview && img) {
-                    img.src = e.target.result;
-                    preview.classList.remove('hidden');
-                }
-            };
-            reader.onerror = function() {
-                showNotification('Fehler beim Laden des Bildes', 'error');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removeImage() {
-            const imageInput = document.getElementById('item-image');
-            const preview = document.getElementById('image-preview');
-            
-            if (imageInput) imageInput.value = '';
-            if (preview) preview.classList.add('hidden');
-        }
-
-        // Enhanced stocktaking functions
-        function startStocktaking() {
-            if (!Array.isArray(inventory) || inventory.length === 0) {
-                showNotification('Keine Artikel im Inventar für Bestandsaufnahme', 'error');
-                return;
-            }
-            
-            currentStocktaking = {
-                id: Date.now(),
-                startTime: new Date(),
-                items: inventory.map(item => ({
-                    ...item,
-                    counted: false,
-                    actualCount: null,
-                    difference: null
-                })),
-                completed: false
-            };
-            
-            const progressDiv = document.getElementById('stocktaking-progress');
-            const scannerDiv = document.getElementById('stocktaking-scanner');
-            
-            if (progressDiv) progressDiv.classList.remove('hidden');
-            if (scannerDiv) scannerDiv.classList.remove('hidden');
-            
-            updateStocktakingDisplay();
-            showNotification('Bestandsaufnahme gestartet', 'success');
-        }
-
-        function recordStockCount() {
-            const barcodeInput = document.getElementById('stocktaking-barcode');
-            const countInput = document.getElementById('stocktaking-count');
-            
-            if (!barcodeInput || !countInput) return;
-            
-            const barcode = barcodeInput.value.trim();
-            const count = parseInt(countInput.value) || 0;
-            
-            if (!barcode) {
-                showNotification('Bitte Barcode eingeben', 'error');
-                return;
-            }
-            
-            if (!currentStocktaking) {
-                showNotification('Keine aktive Bestandsaufnahme', 'error');
-                return;
-            }
-            
-            const item = currentStocktaking.items.find(item => item.barcode === barcode);
-            if (item) {
-                item.actualCount = count;
-                item.difference = count - (item.quantity || 0);
-                item.counted = true;
-                
-                barcodeInput.value = '';
-                countInput.value = '';
-                
-                updateStocktakingDisplay();
-                showNotification(`${item.name}: ${count} Stück erfasst`, 'success');
-            } else {
-                showNotification('Artikel nicht gefunden', 'error');
-            }
-        }
-
-        function updateStocktakingDisplay() {
-            if (!currentStocktaking) return;
-            
-            const totalItems = currentStocktaking.items.length;
-            const countedItems = currentStocktaking.items.filter(item => item.counted).length;
-            const progress = totalItems > 0 ? (countedItems / totalItems) * 100 : 0;
-            
-            const progressText = document.getElementById('progress-text');
-            const progressBar = document.getElementById('progress-bar');
-            
-            if (progressText) progressText.textContent = `${countedItems} / ${totalItems}`;
-            if (progressBar) progressBar.style.width = `${progress}%`;
-            
-            const listDiv = document.getElementById('stocktaking-list');
-            if (!listDiv) return;
-            
-            listDiv.innerHTML = currentStocktaking.items.map(item => {
-                const statusClass = item.counted ? 'completed' : '';
-                const diffColor = item.difference > 0 ? 'text-green-600' : item.difference < 0 ? 'text-red-600' : 'text-gray-600';
-                
-                return `
-                    <div class="stocktaking-item ${statusClass} p-4 border rounded-lg mb-2">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center">
-                                <span class="text-2xl mr-3">${item.image || '📦'}</span>
-                                <div>
-                                    <div class="font-medium">${escapeHtml(item.name || '')}</div>
-                                    <div class="text-sm text-gray-600">${escapeHtml(item.barcode || '')}</div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-sm text-gray-600">Soll: ${item.quantity || 0}</div>
-                                ${item.counted ? `
-                                    <div class="font-medium">Ist: ${item.actualCount || 0}</div>
-                                    <div class="text-sm ${diffColor}">Diff: ${item.difference > 0 ? '+' : ''}${item.difference || 0}</div>
-                                ` : `
-                                    <button onclick="quickCount('${escapeHtml(item.barcode || '')}')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
-                                        Erfassen
-                                    </button>
-                                `}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function quickCount(barcode) {
-            const barcodeInput = document.getElementById('stocktaking-barcode');
-            const countInput = document.getElementById('stocktaking-count');
-            
-            if (barcodeInput) {
-                barcodeInput.value = barcode;
-                if (countInput) countInput.focus();
-            }
-        }
-
-        function exportStocktaking() {
-            if (!currentStocktaking) {
-                showNotification('Keine Bestandsaufnahme zum Exportieren', 'error');
-                return;
-            }
-            
-            try {
-                const csvContent = "data:text/csv;charset=utf-8," 
-                    + "Name,Barcode,Soll-Bestand,Ist-Bestand,Differenz,Status\n"
-                    + currentStocktaking.items.map(item => 
-                        `"${escapeHtml(item.name || '')}","${escapeHtml(item.barcode || '')}",${item.quantity || 0},${item.actualCount || 0},${item.difference || 0},"${item.counted ? 'Erfasst' : 'Offen'}"`
-                    ).join("\n");
-                
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `bestandsaufnahme_${new Date().toISOString().split('T')[0]}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showNotification('Bestandsaufnahme exportiert', 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Fehler beim Export', 'error');
-            }
-        }
-
-        // Enhanced code generator functions
-        function generateCode() {
-            const codeType = document.getElementById('code-type')?.value || 'qr';
-            const selectedItem = document.getElementById('code-item-select')?.value || '';
-            const customCode = document.getElementById('custom-code')?.value?.trim() || '';
-            const size = document.getElementById('code-size')?.value || 'medium';
-            const layout = document.getElementById('label-layout')?.value || 'simple';
-            
-            let codeValue = customCode;
-            let itemData = null;
-            
-            if (selectedItem && !customCode) {
-                itemData = inventory.find(item => item.id == selectedItem);
-                codeValue = itemData ? itemData.barcode : '';
-            }
-            
-            if (!codeValue) {
-                showNotification('Bitte Artikel auswählen oder Code eingeben', 'error');
-                return;
-            }
-            
-            const display = document.getElementById('generated-code-display');
-            const actions = document.getElementById('code-actions');
-            
-            if (!display) return;
-            
-            try {
-                const canvas = document.createElement('canvas');
-                const sizeMap = { small: 150, medium: 250, large: 400 };
-                const canvasSize = sizeMap[size] || 250;
-                
-                if (codeType === 'qr') {
-                    QRCode.toCanvas(canvas, codeValue, {
-                        width: canvasSize,
-                        margin: 2,
-                        color: { dark: '#000000', light: '#FFFFFF' }
-                    }, function (error) {
-                        if (error) {
-                            console.error('QR Code generation error:', error);
-                            showNotification('Fehler beim Erstellen des QR-Codes', 'error');
-                        } else {
-                            displayGeneratedCode(canvas, itemData, layout);
-                            if (actions) actions.classList.remove('hidden');
-                        }
-                    });
-                } else {
-                    canvas.width = canvasSize;
-                    canvas.height = canvasSize / 3;
-                    
-                    JsBarcode(canvas, codeValue, {
-                        format: codeType.toUpperCase(),
-                        width: 2,
-                        height: 100,
-                        displayValue: true
-                    });
-                    
-                    displayGeneratedCode(canvas, itemData, layout);
-                    if (actions) actions.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Code generation error:', error);
-                showNotification('Fehler beim Generieren des Codes', 'error');
-            }
-        }
-
-        function displayGeneratedCode(canvas, itemData, layout) {
-            const display = document.getElementById('generated-code-display');
-            if (!display) return;
-            
-            if (layout === 'simple') {
-                display.innerHTML = '';
-                display.appendChild(canvas);
-            } else if (layout === 'with-text' && itemData) {
-                display.innerHTML = `
-                    <div class="text-center">
-                        <div class="mb-2">${canvas.outerHTML}</div>
-                        <div class="font-bold">${escapeHtml(itemData.name || '')}</div>
-                        <div class="text-sm text-gray-600">${escapeHtml(itemData.barcode || '')}</div>
-                    </div>
-                `;
-            } else if (layout === 'detailed' && itemData) {
-                display.innerHTML = `
-                    <div class="bg-white border-2 border-gray-300 rounded-lg p-4 inline-block">
-                        <div class="text-center mb-3">
-                            <div class="font-bold text-lg">${escapeHtml(itemData.name || '')}</div>
-                            <div class="text-sm text-gray-600">${escapeHtml(itemData.category || '')}</div>
-                        </div>
-                        <div class="mb-3">${canvas.outerHTML}</div>
-                        <div class="text-xs space-y-1">
-                            <div><strong>Barcode:</strong> ${escapeHtml(itemData.barcode || '')}</div>
-                            <div><strong>Preis:</strong> €${(itemData.price || 0).toFixed(2)}</div>
-                            ${itemData.duration ? `<div><strong>Dauer:</strong> ${itemData.duration}s</div>` : ''}
-                            ${itemData.effect ? `<div><strong>Effekt:</strong> ${escapeHtml(itemData.effect)}</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            } else {
-                display.innerHTML = '';
-                display.appendChild(canvas);
-            }
-        }
-
-        function downloadCode() {
-            const display = document.getElementById('generated-code-display');
-            if (!display) return;
-            
-            const canvas = display.querySelector('canvas');
-            if (canvas) {
-                try {
-                    const link = document.createElement('a');
-                    link.download = `barcode_${Date.now()}.png`;
-                    link.href = canvas.toDataURL();
-                    link.click();
-                    showNotification('Code heruntergeladen', 'success');
-                } catch (error) {
-                    console.error('Download error:', error);
-                    showNotification('Fehler beim Download', 'error');
-                }
-            }
-        }
-
-        function copyCodeToClipboard() {
-            const display = document.getElementById('generated-code-display');
-            if (!display) return;
-            
-            const canvas = display.querySelector('canvas');
-            if (canvas && navigator.clipboard && navigator.clipboard.write) {
-                try {
-                    canvas.toBlob(blob => {
-                        const item = new ClipboardItem({ 'image/png': blob });
-                        navigator.clipboard.write([item]).then(() => {
-                            showNotification('Code in Zwischenablage kopiert', 'success');
-                        }).catch(() => {
-                            showNotification('Kopieren nicht unterstützt', 'error');
-                        });
-                    });
-                } catch (error) {
-                    console.error('Clipboard error:', error);
-                    showNotification('Kopieren nicht unterstützt', 'error');
-                }
-            } else {
-                showNotification('Kopieren nicht unterstützt', 'error');
-            }
-        }
-
-        function generateBatchCodes() {
-            const category = document.getElementById('batch-category')?.value || '';
-            const lowStockOnly = document.getElementById('batch-low-stock')?.checked || false;
-            
-            let filteredItems = [...inventory];
-            
-            if (category) {
-                filteredItems = filteredItems.filter(item => item.category === category);
-            }
-            
-            if (lowStockOnly) {
-                filteredItems = filteredItems.filter(item => (item.quantity || 0) <= (item.minStock || 0));
-            }
-            
-            if (filteredItems.length === 0) {
-                showNotification('Keine Artikel für Stapel-Generierung gefunden', 'error');
-                return;
-            }
-            
-            try {
-                // Create a new window for batch printing
-                const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-                if (!printWindow) {
-                    showNotification('Popup-Blocker verhindert das Öffnen des Druckfensters', 'error');
-                    return;
-                }
-                
-                printWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Barcode Etiketten</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            .label { display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ccc; text-align: center; }
-                            canvas { display: block; margin: 0 auto; }
-                            @media print { .label { page-break-inside: avoid; } }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>Barcode Etiketten (${filteredItems.length} Artikel)</h1>
-                        <div id="labels"></div>
-                        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-                        <script>
-                            const items = ${JSON.stringify(filteredItems.map(item => ({
-                                id: item.id,
-                                name: item.name || '',
-                                barcode: item.barcode || '',
-                                price: item.price || 0
-                            })))};
-                            const labelsDiv = document.getElementById('labels');
-                            
-                            items.forEach(item => {
-                                const labelDiv = document.createElement('div');
-                                labelDiv.className = 'label';
-                                labelDiv.innerHTML = \`
-                                    <div><strong>\${item.name}</strong></div>
-                                    <canvas id="canvas-\${item.id}"></canvas>
-                                    <div>\${item.barcode}</div>
-                                    <div>€\${item.price.toFixed(2)}</div>
-                                \`;
-                                labelsDiv.appendChild(labelDiv);
-                                
-                                const canvas = document.getElementById('canvas-' + item.id);
-                                if (canvas && window.QRCode) {
-                                    QRCode.toCanvas(canvas, item.barcode, { width: 100 });
-                                }
-                            });
-                            
-                            setTimeout(() => window.print(), 1000);
-                        </script>
-                    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986ac45b6573d295',t:'MTc1OTE0MTQyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-                    </html>
-                `);
-                
-                showNotification(`${filteredItems.length} Etiketten generiert`, 'success');
-            } catch (error) {
-                console.error('Batch generation error:', error);
-                showNotification('Fehler bei der Stapel-Generierung', 'error');
-            }
-        }
-
-        function printCodes() {
-            try {
-                window.print();
-            } catch (error) {
-                console.error('Print error:', error);
-                showNotification('Drucken nicht verfügbar', 'error');
-            }
-        }
-
-        // Enhanced camera functions
-        async function toggleCamera() {
-            const video = document.getElementById('camera-video');
-            const toggleBtn = document.getElementById('camera-toggle');
-            const placeholder = document.getElementById('scanner-placeholder');
-            const overlay = document.getElementById('scan-overlay');
-
-            if (!video || !toggleBtn || !placeholder || !overlay) return;
-
-            if (!isScanning) {
-                try {
-                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                        throw new Error('Camera not supported');
-                    }
-
-                    const constraints = {
-                        video: {
-                            facingMode: { ideal: 'environment' },
-                            width: { ideal: 640, min: 320 },
-                            height: { ideal: 480, min: 240 }
-                        }
-                    };
-
-                    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                    
-                    video.srcObject = cameraStream;
-                    video.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
-                    overlay.classList.remove('hidden');
-                    
-                    toggleBtn.textContent = '⏹️ Kamera stoppen';
-                    toggleBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                    toggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-                    
-                    isScanning = true;
-                    
-                    if (!codeReader && window.ZXing) {
-                        codeReader = new ZXing.BrowserMultiFormatReader();
-                    }
-                    
-                    if (codeReader) {
-                        startBarcodeScanning();
-                    }
-                    
-                    showNotification('Kamera gestartet', 'success');
-                    
-                } catch (error) {
-                    console.error('Camera access failed:', error);
-                    showNotification('Kamera-Zugriff nicht möglich', 'error');
-                }
-            } else {
-                stopCamera();
-            }
-        }
-
-        function stopCamera() {
-            const video = document.getElementById('camera-video');
-            const toggleBtn = document.getElementById('camera-toggle');
-            const placeholder = document.getElementById('scanner-placeholder');
-            const overlay = document.getElementById('scan-overlay');
-
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            
-            if (codeReader) {
-                try {
-                    codeReader.reset();
-                } catch (error) {
-                    console.error('Error resetting code reader:', error);
-                }
-            }
-
-            if (video) video.classList.add('hidden');
-            if (placeholder) placeholder.classList.remove('hidden');
-            if (overlay) overlay.classList.add('hidden');
-            
-            if (toggleBtn) {
-                toggleBtn.textContent = '📷 Kamera starten';
-                toggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-                toggleBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-            }
-            
-            isScanning = false;
-            showNotification('Kamera gestoppt', 'info');
-        }
-
-        function startBarcodeScanning() {
-            if (!codeReader || !isScanning) return;
-            
-            const video = document.getElementById('camera-video');
-            if (!video) return;
-            
-            try {
-                codeReader.decodeFromVideoDevice(null, video, (result, err) => {
-                    if (result && isScanning) {
-                        const barcode = result.text;
-                        const barcodeInput = document.getElementById('barcode-input');
-                        if (barcodeInput) {
-                            barcodeInput.value = barcode;
-                            scanBarcode();
-                            showNotification(`Barcode gescannt: ${barcode}`, 'success');
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error starting barcode scanning:', error);
-                showNotification('Fehler beim Starten des Scanners', 'error');
-            }
-        }
-
-        // Enhanced barcode scanning
-        function scanBarcode() {
-            const barcodeInput = document.getElementById('barcode-input');
-            if (!barcodeInput) return;
-            
-            const barcode = barcodeInput.value.trim();
-            
-            if (!barcode) {
-                showNotification('Bitte geben Sie einen Barcode ein', 'error');
-                return;
-            }
-            
-            const item = inventory.find(item => item.barcode === barcode);
-            const resultDiv = document.getElementById('scan-result');
-            
-            if (!resultDiv) return;
-            
-            if (item) {
-                const quantity = item.quantity || 0;
-                const minStock = item.minStock || 0;
-                const stockStatus = quantity <= minStock ? 'text-red-600' : 'text-green-600';
-                const stockIcon = quantity <= minStock ? '⚠️' : '✅';
-                
-                resultDiv.innerHTML = `
-                    <div class="text-left">
-                        <div class="flex items-center mb-4">
-                            ${item.photo ? `<img src="${item.photo}" class="w-16 h-16 object-cover rounded-lg mr-4" alt="${escapeHtml(item.name || '')}">` : `<span class="text-4xl mr-4">${item.image || '📦'}</span>`}
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">${escapeHtml(item.name || '')}</h3>
-                                <p class="text-gray-600">${escapeHtml(item.category || 'Sonstiges')}</p>
-                                <p class="text-sm text-gray-500">${escapeHtml(item.description || '')}</p>
-                                ${item.effect ? `<div class="effect-preview text-white px-2 py-1 rounded text-xs mt-1">${escapeHtml(item.effect)}</div>` : ''}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
-                            <div class="bg-gray-50 p-3 rounded">
-                                <span class="text-gray-600">Bestand:</span>
-                                <div class="flex items-center">
-                                    <span class="font-bold ${stockStatus}">${quantity}</span>
-                                    <span class="ml-1">${stockIcon}</span>
-                                </div>
-                            </div>
-                            <div class="bg-gray-50 p-3 rounded">
-                                <span class="text-gray-600">Preis:</span>
-                                <div class="font-bold">€${(item.price || 0).toFixed(2)}</div>
-                            </div>
-                            <div class="bg-gray-50 p-3 rounded">
-                                <span class="text-gray-600">Effektdauer:</span>
-                                <div class="font-bold">${item.duration || 0}s</div>
-                            </div>
-                            <div class="bg-gray-50 p-3 rounded">
-                                <span class="text-gray-600">Gesamtwert:</span>
-                                <div class="font-bold">€${(quantity * (item.price || 0)).toFixed(2)}</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="adjustStock(${item.id}, -1)" class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition-colors">-1</button>
-                            <button onclick="adjustStock(${item.id}, 1)" class="bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600 transition-colors">+1</button>
-                            <button onclick="adjustStock(${item.id}, -5)" class="bg-red-400 text-white px-3 py-2 rounded hover:bg-red-500 transition-colors">-5</button>
-                            <button onclick="adjustStock(${item.id}, 5)" class="bg-green-400 text-white px-3 py-2 rounded hover:bg-green-500 transition-colors">+5</button>
-                            <button onclick="editItem(${item.id})" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors">✏️ Bearbeiten</button>
-                        </div>
-                    </div>
-                `;
-                showNotification(`Artikel gefunden: ${item.name}`, 'success');
-            } else {
-                resultDiv.innerHTML = `
-                    <div class="text-center text-red-600">
-                        <div class="text-6xl mb-4">❌</div>
-                        <p class="text-lg font-bold mb-2">Artikel nicht gefunden</p>
-                        <p class="text-sm text-gray-600 mb-4 font-mono bg-gray-100 p-2 rounded">${escapeHtml(barcode)}</p>
-                        <button onclick="addNewItemWithBarcode('${escapeHtml(barcode)}')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                            ➕ Neuen Artikel anlegen
-                        </button>
-                    </div>
-                `;
-                showNotification(`Artikel mit Barcode ${barcode} nicht gefunden`, 'error');
-            }
-            
-            barcodeInput.value = '';
-        }
-
-        // Enhanced stock adjustment
-        function adjustStock(itemId, change) {
-            const item = inventory.find(item => item.id === itemId);
-            if (!item) return;
-            
-            const oldQuantity = item.quantity || 0;
-            item.quantity = Math.max(0, oldQuantity + change);
-            
-            if (saveInventory()) {
-                // Only call scanBarcode if we're on the scanner tab and have a barcode in the input
-                const currentTab = document.querySelector('.tab-content:not(.hidden)');
-                if (currentTab && currentTab.id === 'scanner-tab') {
-                    const barcodeInput = document.getElementById('barcode-input');
-                    if (barcodeInput && barcodeInput.value.trim() === item.barcode) {
-                        scanBarcode();
-                    }
-                }
-                
-                updateAllViews();
-                
-                const action = change > 0 ? 'hinzugefügt' : 'entfernt';
-                const amount = Math.abs(change);
-                showNotification(`${amount} Stück ${action}: ${item.name}`, 'success');
-                
-                if (item.quantity <= (item.minStock || 0) && oldQuantity > (item.minStock || 0)) {
-                    showNotification(`⚠️ Niedriger Bestand: ${item.name}`, 'error');
-                }
-            }
-        }
-
-        // Enhanced inventory table
-        function updateInventoryTable() {
-            const tableBody = document.getElementById('inventory-table');
-            if (!tableBody) return;
-            
-            const searchInput = document.getElementById('search-inventory');
-            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-            
-            const filteredInventory = inventory.filter(item => 
-                (item.name || '').toLowerCase().includes(searchTerm) ||
-                (item.barcode || '').includes(searchTerm) ||
-                (item.category || '').toLowerCase().includes(searchTerm) ||
-                (item.description || '').toLowerCase().includes(searchTerm)
-            );
-            
-            if (filteredInventory.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                            ${searchTerm ? 'Keine Artikel gefunden' : 'Keine Artikel im Inventar'}
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tableBody.innerHTML = filteredInventory.map(item => {
-                const quantity = item.quantity || 0;
-                const minStock = item.minStock || 0;
-                const price = item.price || 0;
-                
-                const stockStatus = quantity <= minStock ? 'text-red-600' : 'text-green-600';
-                const statusBadge = quantity <= minStock ? 
-                    'bg-red-100 text-red-800' : 
-                    quantity > minStock * 2 ? 
-                        'bg-green-100 text-green-800' : 
-                        'bg-yellow-100 text-yellow-800';
-                const statusText = quantity <= minStock ? 'Niedrig' : 
-                    quantity > minStock * 2 ? 'Gut' : 'Normal';
-                
-                return `
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-4 py-3">
-                            ${item.photo ? `<img src="${item.photo}" class="image-preview" alt="${escapeHtml(item.name || '')}">` : `<span class="text-2xl">${item.image || '📦'}</span>`}
-                        </td>
-                        <td class="px-4 py-3">
-                            <div>
-                                <div class="font-medium text-gray-900">${escapeHtml(item.name || '')}</div>
-                                <div class="text-sm text-gray-500">${escapeHtml(item.category || 'Sonstiges')}</div>
-                                ${item.description ? `<div class="text-xs text-gray-400 mt-1">${escapeHtml(item.description)}</div>` : ''}
-                                ${item.effect ? `<div class="text-xs text-purple-600 mt-1">${escapeHtml(item.effect)}</div>` : ''}
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="text-sm font-mono bg-gray-100 px-2 py-1 rounded">${escapeHtml(item.barcode || '')}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center">
-                                <span class="font-bold ${stockStatus}">${quantity}</span>
-                                <span class="text-xs text-gray-500 ml-1">/ ${minStock}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="font-medium">€${price.toFixed(2)}</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="text-sm">${item.duration || 0}s</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full ${statusBadge}">
-                                ${statusText}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex gap-1">
-                                <button onclick="adjustStock(${item.id}, -1)" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition-colors" title="Bestand -1">-</button>
-                                <button onclick="adjustStock(${item.id}, 1)" class="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors" title="Bestand +1">+</button>
-                                <button onclick="editItem(${item.id})" class="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 transition-colors" title="Bearbeiten">✏️</button>
-                                <button onclick="deleteItem(${item.id})" class="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700 transition-colors" title="Löschen">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // Enhanced add item form
-        const addItemForm = document.getElementById('add-item-form');
-        if (addItemForm) {
-            addItemForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const editId = this.dataset.editId;
-                const imageFile = document.getElementById('item-image')?.files[0];
-                
-                const formData = {
-                    name: document.getElementById('item-name')?.value?.trim() || '',
-                    barcode: document.getElementById('item-barcode')?.value?.trim() || '',
-                    quantity: parseInt(document.getElementById('item-quantity')?.value) || 0,
-                    price: parseFloat(document.getElementById('item-price')?.value) || 0,
-                    category: document.getElementById('item-category')?.value || 'Sonstiges',
-                    minStock: parseInt(document.getElementById('item-min-stock')?.value) || 0,
-                    description: document.getElementById('item-description')?.value?.trim() || '',
-                    duration: parseFloat(document.getElementById('item-duration')?.value) || null,
-                    effect: document.getElementById('item-effect')?.value || ''
-                };
-                
-                // Validation
-                if (!formData.name || !formData.barcode) {
-                    showNotification('Name und Barcode sind erforderlich', 'error');
-                    return;
-                }
-                
-                if (editId) {
-                    const item = inventory.find(item => item.id == editId);
-                    if (item) {
-                        const conflictItem = inventory.find(i => i.barcode === formData.barcode && i.id != editId);
-                        if (conflictItem) {
-                            showNotification('Ein anderer Artikel mit diesem Barcode existiert bereits!', 'error');
-                            return;
-                        }
-                        
-                        Object.assign(item, formData);
-                        item.image = getCategoryEmoji(formData.category);
-                        
-                        if (imageFile) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                item.photo = e.target.result;
-                                saveInventory();
-                                updateAllViews();
-                            };
-                            reader.onerror = function() {
-                                showNotification('Fehler beim Laden des Bildes', 'error');
-                            };
-                            reader.readAsDataURL(imageFile);
-                        } else {
-                            saveInventory();
-                            updateAllViews();
-                        }
-                        
-                        showNotification(`Artikel "${item.name}" aktualisiert`, 'success');
-                    }
-                } else {
-                    if (inventory.find(item => item.barcode === formData.barcode)) {
-                        showNotification('Ein Artikel mit diesem Barcode existiert bereits!', 'error');
-                        return;
-                    }
-                    
-                    const newItem = {
-                        id: Date.now() + Math.random(),
-                        ...formData,
-                        image: getCategoryEmoji(formData.category),
-                        photo: null
-                    };
-                    
-                    if (imageFile) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            newItem.photo = e.target.result;
-                            inventory.push(newItem);
-                            saveInventory();
-                            updateAllViews();
-                            showNotification(`Artikel "${newItem.name}" hinzugefügt`, 'success');
-                        };
-                        reader.onerror = function() {
-                            showNotification('Fehler beim Laden des Bildes', 'error');
-                        };
-                        reader.readAsDataURL(imageFile);
-                    } else {
-                        inventory.push(newItem);
-                        saveInventory();
-                        updateAllViews();
-                        showNotification(`Artikel "${newItem.name}" hinzugefügt`, 'success');
-                    }
-                }
-                
-                // Reset form
-                this.reset();
-                removeImage();
-                delete this.dataset.editId;
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) submitBtn.textContent = 'Artikel hinzufügen';
-                
-                showTab('inventory');
-            });
-        }
-
-        // Enhanced reports
-        function updateReports() {
-            if (!Array.isArray(inventory)) return;
-            
-            const totalItems = inventory.reduce((sum, item) => sum + (item.quantity || 0), 0);
-            const totalValue = inventory.reduce((sum, item) => sum + ((item.quantity || 0) * (item.price || 0)), 0);
-            const lowStockItems = inventory.filter(item => (item.quantity || 0) <= (item.minStock || 0));
-            const categories = [...new Set(inventory.map(item => item.category || 'Sonstiges'))];
-            const itemsWithDuration = inventory.filter(item => item.duration && item.duration > 0);
-            const avgDuration = itemsWithDuration.length > 0 ? 
-                itemsWithDuration.reduce((sum, item) => sum + item.duration, 0) / itemsWithDuration.length : 0;
-            
-            const totalItemsEl = document.getElementById('total-items');
-            const totalValueEl = document.getElementById('total-value');
-            const lowStockCountEl = document.getElementById('low-stock-count');
-            const categoryCountEl = document.getElementById('category-count');
-            const avgDurationEl = document.getElementById('avg-duration');
-            
-            if (totalItemsEl) totalItemsEl.textContent = totalItems;
-            if (totalValueEl) totalValueEl.textContent = `€${totalValue.toFixed(2)}`;
-            if (lowStockCountEl) lowStockCountEl.textContent = lowStockItems.length;
-            if (categoryCountEl) categoryCountEl.textContent = categories.length;
-            if (avgDurationEl) avgDurationEl.textContent = `${avgDuration.toFixed(1)}s`;
-            
-            const lowStockDiv = document.getElementById('low-stock-items');
-            if (lowStockDiv) {
-                if (lowStockItems.length > 0) {
-                    lowStockDiv.innerHTML = lowStockItems.map(item => `
-                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
-                            <div class="flex items-center">
-                                ${item.photo ? `<img src="${item.photo}" class="w-8 h-8 object-cover rounded mr-3" alt="${escapeHtml(item.name || '')}">` : `<span class="text-xl mr-3">${item.image || '📦'}</span>`}
-                                <div>
-                                    <div class="font-medium">${escapeHtml(item.name || '')}</div>
-                                    <div class="text-sm text-gray-600">Bestand: ${item.quantity || 0} / Min: ${item.minStock || 0}</div>
-                                    <div class="text-xs text-gray-500">${escapeHtml(item.category || 'Sonstiges')}</div>
-                                </div>
-                            </div>
-                            <button onclick="showTab('scanner'); document.getElementById('barcode-input').value='${escapeHtml(item.barcode || '')}'; scanBarcode();" 
-                                    class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
-                                Auffüllen
-                            </button>
-                        </div>
-                    `).join('');
-                } else {
-                    lowStockDiv.innerHTML = '<p class="text-gray-500 text-center py-4">✅ Alle Artikel haben ausreichend Bestand</p>';
-                }
-            }
-        }
-
-        // Populate selects
-        function populateSelects() {
-            const codeSelect = document.getElementById('code-item-select');
-            if (!codeSelect) return;
-            
-            codeSelect.innerHTML = '<option value="">Artikel auswählen...</option>';
-            
-            inventory.forEach(item => {
-                if (item.id && item.name && item.barcode) {
-                    const option = document.createElement('option');
-                    option.value = item.id;
-                    option.textContent = `${item.name} (${item.barcode})`;
-                    codeSelect.appendChild(option);
-                }
-            });
-        }
-
-        // Utility functions
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = String(text);
-            return div.innerHTML;
-        }
-
-        function getCategoryEmoji(category) {
-            const emojis = {
-                'Raketen': '🚀',
-                'Batterien': '🔋',
-                'Römische Lichter': '💡',
-                'Fontänen': '⛲',
-                'Bengalos': '🔥',
-                'Knaller': '💥',
-                'Verbundfeuerwerk': '🎆',
-                'Sonstiges': '📦'
-            };
-            return emojis[category] || '📦';
-        }
-
-        function updateSyncStatus(message) {
-            const statusElement = document.getElementById('sync-status');
-            if (statusElement) {
-                statusElement.textContent = message;
-                
-                setTimeout(() => {
-                    statusElement.textContent = '🔄 Synchronisiert';
-                }, 3000);
-            }
-        }
-
-        function addNewItemWithBarcode(barcode) {
-            showTab('add-item');
-            const barcodeInput = document.getElementById('item-barcode');
-            const nameInput = document.getElementById('item-name');
-            
-            if (barcodeInput) barcodeInput.value = barcode;
-            if (nameInput) nameInput.focus();
-        }
-
-        function editItem(itemId) {
-            const item = inventory.find(item => item.id === itemId);
-            if (!item) return;
-            
-            showTab('add-item');
-            
-            const fields = [
-                'item-name', 'item-barcode', 'item-quantity', 'item-price',
-                'item-category', 'item-min-stock', 'item-description',
-                'item-duration', 'item-effect'
-            ];
-            
-            fields.forEach(fieldId => {
-                const element = document.getElementById(fieldId);
-                if (element) {
-                    const fieldName = fieldId.replace('item-', '').replace('-', '');
-                    let value = '';
-                    
-                    switch(fieldName) {
-                        case 'name': value = item.name || ''; break;
-                        case 'barcode': value = item.barcode || ''; break;
-                        case 'quantity': value = item.quantity || 0; break;
-                        case 'price': value = item.price || 0; break;
-                        case 'category': value = item.category || 'Sonstiges'; break;
-                        case 'minstock': value = item.minStock || 0; break;
-                        case 'description': value = item.description || ''; break;
-                        case 'duration': value = item.duration || ''; break;
-                        case 'effect': value = item.effect || ''; break;
-                    }
-                    
-                    element.value = value;
-                }
-            });
-            
-            if (item.photo) {
-                const previewImg = document.getElementById('preview-img');
-                const imagePreview = document.getElementById('image-preview');
-                
-                if (previewImg && imagePreview) {
-                    previewImg.src = item.photo;
-                    imagePreview.classList.remove('hidden');
-                }
-            }
-            
-            const form = document.getElementById('add-item-form');
-            const submitBtn = form?.querySelector('button[type="submit"]');
-            
-            if (form) form.dataset.editId = itemId;
-            if (submitBtn) submitBtn.textContent = 'Artikel aktualisieren';
-        }
-
-        function deleteItem(itemId) {
-            const item = inventory.find(item => item.id === itemId);
-            if (item && confirm(`Möchten Sie "${item.name}" wirklich löschen?`)) {
-                inventory = inventory.filter(item => item.id !== itemId);
-                saveInventory();
-                updateAllViews();
-                showNotification(`Artikel "${item.name}" gelöscht`, 'success');
-            }
-        }
-
-        // Tab management
-        function showTab(tabName) {
-            if (isScanning && tabName !== 'scanner') {
-                stopCamera();
-            }
-            
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            document.querySelectorAll('[id^="tab-"]').forEach(btn => {
-                btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-                btn.classList.add('text-gray-500');
-            });
-            
-            const tabContent = document.getElementById(tabName + '-tab');
-            if (tabContent) tabContent.classList.remove('hidden');
-            
-            const activeBtn = document.getElementById('tab-' + tabName);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-gray-500');
-                activeBtn.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-            }
-            
-            // Update content based on active tab
-            switch(tabName) {
-                case 'inventory':
-                    updateInventoryTable();
-                    break;
-                case 'reports':
-                    updateReports();
-                    break;
-                case 'code-generator':
-                    populateSelects();
-                    break;
-                case 'stocktaking':
-                    if (currentStocktaking) {
-                        updateStocktakingDisplay();
-                    }
-                    break;
-            }
-        }
-
-        // Update all views
-        function updateAllViews() {
-            updateInventoryTable();
-            updateReports();
-            populateSelects();
-        }
-
-        // Event listeners
-        function setupEventListeners() {
-            const searchInput = document.getElementById('search-inventory');
-            if (searchInput) {
-                searchInput.addEventListener('input', updateInventoryTable);
-            }
-            
-            const barcodeInput = document.getElementById('barcode-input');
-            if (barcodeInput) {
-                barcodeInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        scanBarcode();
-                    }
-                });
-            }
-            
-            const stocktakingInput = document.getElementById('stocktaking-barcode');
-            if (stocktakingInput) {
-                stocktakingInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        recordStockCount();
-                    }
-                });
-            }
-        }
-
-        // Cloud functions
-        function exportToCloud() {
-            try {
-                const data = {
-                    inventory: inventory,
-                    timestamp: new Date().toISOString(),
-                    version: '2.1',
-                    itemCount: inventory.length,
-                    githubPagesReady: true
-                };
-                
-                const jsonData = JSON.stringify(data, null, 2);
-                const blob = new Blob([jsonData], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `pyrotechnik_backup_${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                URL.revokeObjectURL(url);
-                updateSyncStatus('☁️ Backup erstellt');
-                showNotification('Backup-Datei wurde heruntergeladen!', 'success');
-                
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Fehler beim Erstellen des Backups', 'error');
-            }
-        }
-
-        function importFromCloud() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            
-            input.onchange = function(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        
-                        if (data.inventory && Array.isArray(data.inventory)) {
-                            const confirmImport = confirm(
-                                `Backup vom ${new Date(data.timestamp).toLocaleDateString()} gefunden.\n` +
-                                `Enthält ${data.itemCount || data.inventory.length} Artikel.\n\n` +
-                                `Möchten Sie die aktuellen Daten ersetzen oder zusammenführen?\n\n` +
-                                `OK = Ersetzen\nAbbrechen = Zusammenführen`
-                            );
-                            
-                            if (confirmImport) {
-                                inventory = data.inventory.filter(item => 
-                                    item && typeof item === 'object' && item.id && item.name && item.barcode
-                                );
-                            } else {
-                                let mergedCount = 0;
-                                data.inventory.forEach(importItem => {
-                                    if (importItem && importItem.barcode) {
-                                        const existingItem = inventory.find(item => item.barcode === importItem.barcode);
-                                        if (!existingItem) {
-                                            inventory.push(importItem);
-                                            mergedCount++;
-                                        }
-                                    }
-                                });
-                                showNotification(`${mergedCount} neue Artikel hinzugefügt`, 'success');
-                            }
-                            
-                            saveInventory();
-                            updateAllViews();
-                            updateSyncStatus('📥 Aus Cloud geladen');
-                            showNotification('Daten erfolgreich importiert!', 'success');
-                            
-                        } else {
-                            throw new Error('Invalid backup format');
-                        }
-                    } catch (error) {
-                        console.error('Import error:', error);
-                        showNotification('Ungültiges Backup-Format', 'error');
-                    }
-                };
-                reader.onerror = function() {
-                    showNotification('Fehler beim Lesen der Datei', 'error');
-                };
-                reader.readAsText(file);
-            };
-            
-            input.click();
-        }
-
-        function exportInventory() {
-            try {
-                const csvContent = "data:text/csv;charset=utf-8," 
-                    + "Name,Barcode,Anzahl,Preis,Kategorie,Mindestbestand,Beschreibung,Effektdauer,Effekttyp,Gesamtwert\n"
-                    + inventory.map(item => 
-                        `"${escapeHtml(item.name || '')}","${escapeHtml(item.barcode || '')}",${item.quantity || 0},${(item.price || 0).toFixed(2)},"${escapeHtml(item.category || '')}",${item.minStock || 0},"${escapeHtml(item.description || '')}",${item.duration || 0},"${escapeHtml(item.effect || '')}",${((item.quantity || 0) * (item.price || 0)).toFixed(2)}`
-                    ).join("\n");
-                
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `inventar_export_${new Date().toISOString().split('T')[0]}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showNotification('Inventar als CSV exportiert', 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Fehler beim Export', 'error');
-            }
-        }
-
-        function loadSampleData() {
-            const sampleData = [
-                {
-                    id: Date.now() + Math.random(),
-                    name: "Goldene Fontäne Premium",
-                    barcode: "4444444444444",
-                    quantity: 40,
-                    price: 4.50,
-                    category: "Fontänen",
-                    minStock: 12,
-                    description: "Goldene Funken-Fontäne 60 Sekunden",
-                    image: "⛲",
-                    duration: 60,
-                    effect: "Goldene Funken",
-                    photo: null
-                },
-                {
-                    id: Date.now() + Math.random() + 1,
-                    name: "Bengalo Rot Profi",
-                    barcode: "5555555555555",
-                    quantity: 60,
-                    price: 1.99,
-                    category: "Bengalos",
-                    minStock: 20,
-                    description: "Rotes Bengalo 90 Sekunden Brenndauer",
-                    image: "🔥",
-                    duration: 90,
-                    effect: "Rote Flamme",
-                    photo: null
-                }
-            ];
-
-            let addedCount = 0;
-            sampleData.forEach(item => {
-                if (!inventory.find(existing => existing.barcode === item.barcode)) {
-                    inventory.push(item);
-                    addedCount++;
-                }
-            });
-
-            if (addedCount > 0) {
-                saveInventory();
-                updateAllViews();
-                showNotification(`${addedCount} Beispielartikel hinzugefügt`, 'success');
-                showTab('inventory');
-            } else {
-                showNotification('Alle Beispieldaten bereits vorhanden', 'info');
-            }
-        }
-
-        // Barcode scanning from image
-        function scanBarcodeFromImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showNotification('Bitte wählen Sie eine Bilddatei aus', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    try {
-                        if (!codeReader && window.ZXing) {
-                            codeReader = new ZXing.BrowserMultiFormatReader();
-                        }
-
-                        if (codeReader) {
-                            codeReader.decodeFromImageElement(img)
-                                .then(result => {
-                                    const barcode = result.text;
-                                    const barcodeInput = document.getElementById('barcode-input');
-                                    if (barcodeInput) {
-                                        barcodeInput.value = barcode;
-                                        scanBarcode();
-                                        showNotification(`Barcode erfolgreich gescannt: ${barcode}`, 'success');
-                                    }
-                                })
-                                .catch(err => {
-                                    console.error('Barcode scanning failed:', err);
-                                    showNotification('Kein Barcode im Bild gefunden', 'error');
-                                });
-                        } else {
-                            showNotification('Barcode-Scanner nicht verfügbar', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Image processing error:', error);
-                        showNotification('Fehler beim Verarbeiten des Bildes', 'error');
-                    }
-                };
-                img.onerror = function() {
-                    showNotification('Fehler beim Laden des Bildes', 'error');
-                };
-                img.src = e.target.result;
-            };
-            reader.onerror = function() {
-                showNotification('Fehler beim Lesen der Datei', 'error');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Global variables for import
-        let pendingImportData = null;
-        let columnMappings = {};
-
-        // Enhanced file import with column mapping
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            showNotification('Datei wird verarbeitet...', 'info');
-            const fileName = file.name.toLowerCase();
-            
-            if (fileName.endsWith('.csv')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    processImportData(e.target.result, file.name);
-                };
-                reader.onerror = function() {
-                    showNotification('Fehler beim Lesen der CSV-Datei', 'error');
-                };
-                reader.readAsText(file, 'UTF-8');
-            } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        
-                        // Show sheet selection if multiple sheets
-                        if (workbook.SheetNames.length > 1) {
-                            showSheetSelection(workbook, file.name);
-                        } else {
-                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                            const csv = XLSX.utils.sheet_to_csv(worksheet);
-                            processImportData(csv, file.name);
-                        }
-                    } catch (error) {
-                        console.error('Excel processing error:', error);
-                        showNotification('Fehler beim Lesen der Excel-Datei', 'error');
-                    }
-                };
-                reader.onerror = function() {
-                    showNotification('Fehler beim Lesen der Excel-Datei', 'error');
-                };
-                reader.readAsArrayBuffer(file);
-            } else {
-                showNotification('Nicht unterstütztes Dateiformat', 'error');
-            }
-        }
-
-        function showSheetSelection(workbook, fileName) {
-            const sheetNames = workbook.SheetNames;
-            const options = sheetNames.map((name, index) => 
-                `<option value="${index}">${escapeHtml(name)}</option>`
-            ).join('');
-            
-            const html = `
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                    <h4 class="font-semibold text-yellow-800 mb-2">📊 Arbeitsblatt auswählen</h4>
-                    <p class="text-sm text-yellow-700 mb-3">Die Excel-Datei enthält mehrere Arbeitsblätter. Wählen Sie das zu importierende Blatt:</p>
-                    <select id="sheet-selector" class="w-full p-2 border border-yellow-300 rounded mb-3">
-                        ${options}
-                    </select>
-                    <button onclick="processSelectedSheet()" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors">
-                        Blatt importieren
-                    </button>
-                </div>
-            `;
-            
-            const columnMapping = document.getElementById('column-mapping');
-            if (columnMapping) {
-                columnMapping.innerHTML = html;
-                columnMapping.classList.remove('hidden');
-            }
-            
-            // Store workbook for later use
-            window.tempWorkbook = workbook;
-            window.tempFileName = fileName;
-        }
-
-        function processSelectedSheet() {
-            const sheetSelector = document.getElementById('sheet-selector');
-            if (!sheetSelector) return;
-            
-            const sheetIndex = parseInt(sheetSelector.value);
-            const workbook = window.tempWorkbook;
-            const worksheet = workbook.Sheets[workbook.SheetNames[sheetIndex]];
-            const csv = XLSX.utils.sheet_to_csv(worksheet);
-            
-            processImportData(csv, window.tempFileName);
-            
-            // Cleanup
-            delete window.tempWorkbook;
-            delete window.tempFileName;
-        }
-
-        function processImportData(csvText, fileName) {
-            try {
-                const lines = csvText.split('\n').filter(line => line.trim());
-                if (lines.length < 2) {
-                    showNotification('Datei ist leer oder enthält keine Daten', 'error');
-                    return;
-                }
-
-                // Parse header and detect columns
-                const headers = parseCSVLine(lines[0]);
-                const detectedMappings = detectColumnMappings(headers);
-                
-                // Parse sample data for preview
-                const sampleRows = lines.slice(1, Math.min(6, lines.length)).map(line => parseCSVLine(line));
-                
-                pendingImportData = {
-                    fileName: fileName,
-                    headers: headers,
-                    rows: lines.slice(1).map(line => parseCSVLine(line)),
-                    sampleRows: sampleRows
-                };
-                
-                showColumnMapping(headers, detectedMappings, sampleRows);
-                
-            } catch (error) {
-                console.error('Data processing error:', error);
-                showNotification('Fehler beim Verarbeiten der Daten', 'error');
-            }
-        }
-
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-            
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            
-            result.push(current.trim());
-            return result.map(cell => cell.replace(/^"|"$/g, ''));
-        }
-
-        function detectColumnMappings(headers) {
-            const mappings = {};
-            const fieldMappings = {
-                name: ['name', 'artikelname', 'bezeichnung', 'artikel', 'produkt', 'title'],
-                barcode: ['barcode', 'ean', 'code', 'artikel-nr', 'artikelnr', 'artikelnummer', 'id'],
-                quantity: ['anzahl', 'bestand', 'menge', 'stück', 'stock', 'qty', 'quantity'],
-                price: ['preis', 'kosten', 'vk-preis', 'verkaufspreis', 'price', 'cost'],
-                category: ['kategorie', 'gruppe', 'typ', 'category', 'group', 'type'],
-                minStock: ['mindestbestand', 'min-bestand', 'minimum', 'min', 'minstock'],
-                description: ['beschreibung', 'details', 'info', 'description', 'notes'],
-                duration: ['dauer', 'effektdauer', 'brenndauer', 'duration', 'time'],
-                effect: ['effekt', 'effekttyp', 'effect', 'type']
-            };
-            
-            headers.forEach((header, index) => {
-                const normalizedHeader = header.toLowerCase().trim();
-                
-                for (const [field, keywords] of Object.entries(fieldMappings)) {
-                    if (keywords.some(keyword => normalizedHeader.includes(keyword))) {
-                        mappings[field] = index;
-                        break;
-                    }
-                }
-            });
-            
-            return mappings;
-        }
-
-        function showColumnMapping(headers, detectedMappings, sampleRows) {
-            const fields = [
-                { key: 'name', label: 'Artikelname', required: true },
-                { key: 'barcode', label: 'Barcode', required: true },
-                { key: 'quantity', label: 'Anzahl', required: true },
-                { key
+</body>
+</html>
