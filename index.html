@@ -1,350 +1,379 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pyrotechnik Lager Manager Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/@zxing/library@latest"></script> 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script> 
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎆 Pyrotechnik Lager Manager Pro</title>
 
-    <style>
-        /* KORREKTUR: Entfernung doppelter, leerer Klammern */
-        body {
-            box-sizing: border-box;
-        }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- XLSX für Export/Import -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- ZXing für Barcode-Scanner -->
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <!-- QR-Code Generator -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- JsBarcode für Barcode-Generierung -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
-        .scanner-line {
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { transform: translateY(-100%); }
-            /* KORREKTUR: Korrektur der translateY-Funktion */
-            100% { transform: translateY(300px); }
-        }
-
-        .barcode {
-            background: repeating-linear-gradient(
-                90deg,
-                #000 0px,
-                #000 2px,
-                #fff 2px,
-                #fff 4px
-            );
-            height: 40px;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            padding: 12px 24px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success { background-color: #10b981; }
-        .notification.error { background-color: #ef4444; }
-        .notification.info { background-color: #3b82f6; }
-
-        .image-preview {
-            max-width: 100px;
-            max-height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .stocktaking-item {
-            transition: all 0.3s ease;
-        }
-
-        .stocktaking-item.completed {
-            background-color: #f0f9ff;
-            border-left: 4px solid #10b981;
-        }
-
-        .effect-preview {
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
-            background-size: 400% 400%;
-            animation: effectGradient 3s ease infinite;
-        }
-
-        @keyframes effectGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* GitHub Pages optimizations */
-        .github-pages-ready {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .container-fluid {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Improved mobile responsiveness */
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            .notification {
-                right: 10px;
-                left: 10px;
-                transform: translateY(-100px);
-            }
-            .notification.show {
-                transform: translateY(0);
-            }
-        }
-    </style>
+  <style>
+    /* -------------------------------
+       ✅ Grundstyles
+    --------------------------------*/
+    body { box-sizing: border-box; margin:0; font-family:Inter,Arial,sans-serif; }
+    .scanner-line { animation: scan 2s linear infinite; }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(300px); } }
+    .barcode { background: repeating-linear-gradient(90deg,#000 0 2px,#fff 2px 4px); height:40px; }
+    .notification { position: fixed; top:20px; right:20px; z-index:1000; padding:12px 24px; border-radius:8px; color:white; font-weight:500; transform: translateX(400px); transition: transform .3s ease; }
+    .notification.show { transform: translateX(0); }
+    .notification.success { background:#10b981; } .notification.error { background:#ef4444; } .notification.info { background:#3b82f6; }
+    .image-preview { max-width:100px; max-height:100px; object-fit:cover; border-radius:8px; }
+    .stocktaking-item { transition: all .3s ease; }
+    .stocktaking-item.completed { background:#f0f9ff; border-left:4px solid #10b981; }
+    .effect-preview { background: linear-gradient(45deg,#ff6b6b,#ffd93d,#6bcf7f,#4d96ff); background-size:400% 400%; animation: effectGradient 3s ease infinite; color:white; padding:.25rem .5rem; border-radius:.5rem; display:inline-block; }
+    @keyframes effectGradient { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+    .github-pages-ready { min-height:100vh; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
+    .container-fluid { max-width:1400px; margin:0 auto; padding-left:1rem; padding-right:1rem; }
+    @media (max-width:768px){ .notification{ right:10px; left:10px; transform:translateY(-100px);} .notification.show{ transform:translateY(0);} }
+  </style>
 </head>
 
 <body class="github-pages-ready">
+  <!-- 🔔 Notifications -->
+  <div id="notification-container"></div>
 
-    <div id="notification-container"></div>
+  <div class="container-fluid px-4 py-8">
+    <!-- -------------------------------
+         ✅ HEADER
+    ---------------------------------->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">🎆 Pyrotechnik Lager Manager Pro</h1>
+          <p class="text-gray-600">Verwalten Sie Ihr Pyrotechnik-Inventar mit Scanner, Bestandsaufnahme, Code-Generator & mehr</p>
+          <div class="mt-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full inline-block">✅ GitHub Pages Ready</div>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+          <div class="flex items-center gap-2"><span id="sync-status" class="text-sm text-gray-500">🔄 Synchronisiert</span></div>
+          <div class="flex gap-2">
+            <button onclick="exportToCloud()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">☁️ Backup</button>
+            <button onclick="importFromCloud()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">📥 Backup laden</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="container-fluid px-4 py-8">
+    <!-- -------------------------------
+         ✅ NAVIGATION
+    ---------------------------------->
+    <div class="bg-white rounded-lg shadow-lg mb-8">
+      <div class="flex flex-wrap border-b overflow-x-auto">
+        <button onclick="showTab('scanner')" id="tab-scanner" class="px-6 py-4 font-medium text-blue-600 border-b-2 border-blue-600">📱 Scanner</button>
+        <button onclick="showTab('inventory')" id="tab-inventory" class="px-6 py-4 font-medium text-gray-500">📋 Inventar</button>
+        <button onclick="showTab('stocktaking')" id="tab-stocktaking" class="px-6 py-4 font-medium text-gray-500">📊 Bestandsaufnahme</button>
+        <button onclick="showTab('add-item')" id="tab-add-item" class="px-6 py-4 font-medium text-gray-500">➕ Artikel hinzufügen</button>
+        <button onclick="showTab('code-generator')" id="tab-code-generator" class="px-6 py-4 font-medium text-gray-500">🏷️ Code Generator</button>
+        <button onclick="showTab('import')" id="tab-import" class="px-6 py-4 font-medium text-gray-500">📥 Import</button>
+        <button onclick="showTab('reports')" id="tab-reports" class="px-6 py-4 font-medium text-gray-500">📊 Berichte</button>
+      </div>
+    </div>
 
-        <div class="bg-white rounded-Ig shadow-lg p-6 mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Pyrotechnik Lager Manager Pro</h1>
-                    <p class="text-gray-600">Verwalten Sie Ihr Pyrotechnik-Inventar mit Bestandsaufnahme, Bildupload und Code-Generator</p>
-                    <div class="mt-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full inline-block">
-                        GitHub Pages Ready - Vollständig funktionsfähig
-                    </div>
+    <!-- -------------------------------
+         ✅ TAB: SCANNER
+    ---------------------------------->
+    <div id="scanner-tab" class="tab-content">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Barcode Scanner -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Barcode Scanner</h2>
+
+          <!-- Live Kamera Scanner -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">📹 Live Kamera Scanner</h3>
+            <div class="relative bg-gray-900 rounded-lg p-4 mb-4" style="height:300px;">
+              <video id="camera-video" class="w-full h-full object-cover rounded hidden" autoplay playsinline muted></video>
+              <canvas id="camera-canvas" class="hidden"></canvas>
+              <div id="scanner-placeholder" class="absolute inset-4 border-2 border-green-400 rounded-lg">
+                <div class="scanner-line absolute w-full h-1 bg-green-400 opacity-70"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-center">
+                  <p class="text-green-400 text-sm">Kamera starten um Barcodes zu scannen</p>
                 </div>
-                <div class="flex flex-col items-end gap-2">
-                    <div class="flex items-center gap-2">
-                        <span id="sync-status" class="text-sm text-gray-500">Synchronisiert</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="exportToCloud()" class="bg-blue-600 text-white px-4 py-2 rounded-Ig hover:bg-blue-700 text-sm transition-colors">
-                            Backup erstellen
-                        </button>
-                        <button onclick="importFromCloud()" class="bg-green-600 text-white px-4 py-2 rounded-Ig hover:bg-green-700 text-sm transition-colors">
-                            Backup laden
-                        </button>
-                    </div>
+              </div>
+              <div id="scan-overlay" class="absolute inset-4 border-2 border-green-400 rounded-lg hidden">
+                <div class="scanner-line absolute w-full h-1 bg-green-400 opacity-70"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-center">
+                  <p class="text-green-400 text-sm">Barcode in den Rahmen halten</p>
                 </div>
+              </div>
             </div>
+            <button onclick="toggleCamera()" id="camera-toggle" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 mb-4">📷 Kamera starten</button>
+          </div>
+
+          <!-- Foto-Upload -->
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">📸 Barcode-Foto hochladen</h3>
+            <div class="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50">
+              <input type="file" id="barcode-photo" accept="image/*" class="hidden" onchange="scanBarcodeFromImage(event)">
+              <label for="barcode-photo" class="cursor-pointer">
+                <div class="text-blue-500 mb-2">
+                  <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                </div>
+                <p class="text-sm text-blue-600 font-medium">Foto von Barcode aufnehmen</p>
+                <p class="text-xs text-gray-500 mt-1">Alternative: Foto hochladen</p>
+              </label>
+            </div>
+          </div>
+
+          <!-- Manuelle Eingabe -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">⌨️ Manuelle Eingabe</h3>
+            <input type="text" id="barcode-input" placeholder="Barcode hier eingeben..." class="w-full p-3 border border-gray-300 rounded-lg mb-4">
+            <button onclick="scanBarcode()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">🔍 Suchen</button>
+          </div>
         </div>
 
-        <div class="bg-white rounded-Ig shadow-lg mb-8">
-            <div class="flex flex-wrap border-b overflow-x-auto">
-                <button onclick="showTab('scanner')" id="tab-scanner" class="px-6 py-4 font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
-                    Scanner
-                </button>
-                <button onclick="showTab('inventory')" id="tab-inventory" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    Inventar
-                </button>
-                <button onclick="showTab('stocktaking')" id="tab-stocktaking" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    Bestandsaufnahme
-                </button>
-                <button onclick="showTab('add-item')" id="tab-add-item" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    + Artikel hinzufügen
-                </button>
-                <button onclick="showTab('code-generator')" id="tab-code-generator" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    Code Generator
-                </button>
-                <button onclick="showTab('import')" id="tab-import" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    Import
-                </button>
-                <button onclick="showTab('reports')" id="tab-reports" class="px-6 py-4 font-medium text-gray-500 hover:text-blue-600 whitespace-nowrap">
-                    Berichte
-                </button>
-            </div>
+        <!-- Scan Ergebnis -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">📄 Scan Ergebnis</h2>
+          <div id="scan-result" class="text-center text-gray-500 py-8">Scannen Sie einen Barcode um Details anzuzeigen</div>
         </div>
+      </div>
+    </div>
 
-        <div id="scanner-tab" class="tab-content">
-            <div class="grid lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 Barcode Scanner</h2>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-3">📹 Live Kamera Scanner</h3>
-                        <div class="relative bg-gray-900 rounded-lg p-4 mb-4" style="height: 300px;">
-                            <video id="camera-video" class="w-full h-full object-cover rounded hidden" autoplay playsinline muted></video> 
-                            <canvas id="camera-canvas" class="hidden"></canvas>
-                            <div id="scanner-placeholder" class="absolute inset-4 border-2 border-green-400 rounded-lg">
-                                <div class="scanner-line absolute w-full h-1 bg-green-400 opacity-70"></div>
-                                <div class="absolute bottom-4 left-4 right-4 text-center">
-                                    <p class="text-green-400 text-sm">Kamera starten um Barcodes zu scannen</p>
-                                </div>
-                            </div>
-                            <div id="scan-overlay" class="absolute inset-4 border-2 border-green-400 rounded-lg hidden">
-                                <div class="scanner-line absolute w-full h-1 bg-green-400 opacity-70"></div>
-                                <div class="absolute bottom-4 left-4 right-4 text-center">
-                                    <p class="text-green-400 text-sm">Barcode in den Rahmen halten</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="toggleCamera()" id="camera-toggle" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 mb-4 transition-colors">
-                            📷 Kamera starten
-                        </button>
-                    </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-3">📸 Barcode-Foto hochladen</h3>
-                        <div class="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center bg-blue-50 hover:bg-blue-100 transition-colors">
-                            <input type="file" id="barcode-photo" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromImage(event)">
-                            <label for="barcode-photo" class="cursor-pointer">
-                                <div class="text-blue-500 mb-2">
-                                    <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
-                                <p class="text-sm text-blue-600 font-medium">Foto von Barcode aufnehmen</p>
-                                <p class="text-xs text-gray-500 mt-1">Alternative: Foto hochladen</p>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-3">⌨️ Manuelle Eingabe</h3>
-                        <input type="text" id="barcode-input" placeholder="Barcode hier eingeben..." class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <button onclick="scanBarcode()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                            🔍 Suchen
-                        </button>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">📄 Scan Ergebnis</h2>
-                    <div id="scan-result" class="text-center text-gray-500 py-8">
-                        Scannen Sie einen Barcode um Details anzuzeigen
-                    </div>
-                </div>
-            </div>
+    <!-- -------------------------------
+         ✅ TAB: INVENTAR
+    ---------------------------------->
+    <div id="inventory-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-gray-800">📦 Inventar Übersicht</h2>
+          <div class="flex gap-2">
+            <input id="search-inventory" placeholder="Artikel suchen..." class="px-4 py-2 border rounded" oninput="updateInventoryTable()">
+            <button onclick="exportInventory()" class="bg-green-600 text-white px-4 py-2 rounded">📥 Export CSV</button>
+          </div>
         </div>
+        <div class="overflow-x-auto">
+          <table class="w-full table-auto">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left">Bild</th>
+                <th class="px-4 py-3 text-left">Artikel</th>
+                <th class="px-4 py-3 text-left">Barcode</th>
+                <th class="px-4 py-3 text-left">Bestand</th>
+                <th class="px-4 py-3 text-left">Preis</th>
+                <th class="px-4 py-3 text-left">Effektdauer</th>
+                <th class="px-4 py-3 text-left">Status</th>
+                <th class="px-4 py-3 text-left">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table" class="divide-y divide-gray-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        <div id="inventory-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="text-xl font-bold text-gray-800">📦 Inventar Übersicht</h2>
-                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                        <input type="text" id="search-inventory" placeholder="Artikel suchen..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 flex-1 md:flex-none">
-                        <button onclick="exportInventory()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                            📥 Export CSV
-                        </button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full table-auto">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Bild</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Artikel</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Barcode</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Bestand</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Preis</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Effektdauer</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-table" class="divide-y divide-gray-200">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <!-- -------------------------------
+         ✅ TAB: BESTANDSAUFNAHME
+         (aktuell nur Platzhalter)
+    ---------------------------------->
+    <div id="stocktaking-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Bestandsaufnahme</h2>
+        <p class="text-gray-500">TODO: Hier kannst du eine Checkliste bauen, um Artikel einzeln zu überprüfen.</p>
+      </div>
+    </div>
 
-        <div id="stocktaking-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 class="text-xl font-bold text-gray-800">📊 Bestandsaufnahme</h2>
-                    <div class="flex gap-2">
-                        <button onclick="startStocktaking()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            🚀 Neue Aufnahme starten
-                        </button>
-                        <button onclick="exportStocktaking()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                            📥 Export
-                        </button>
-                    </div>
-                </div>
-                <div id="stocktaking-progress" class="mb-6 hidden">
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-blue-700">Fortschritt</span>
-                            <span id="progress-text" class="text-sm text-blue-600">0 / 0</span>
-                        </div>
-                        <div class="w-full bg-blue-200 rounded-full h-2">
-                            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="stocktaking-scanner" class="mb-6 hidden">
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                        <h3 class="text-lg font-semibold text-yellow-800 mb-3">📱 Schnell-Scanner</h3>
-                        <div class="flex gap-2">
-                            <input type="text" id="stocktaking-barcode" placeholder="Barcode scannen oder eingeben..." class="flex-1 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                            <input type="number" id="stocktaking-count" placeholder="Anzahl" min="0" class="w-24 p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                            <button onclick="recordStockCount()" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
-                                ✓ Erfassen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="stocktaking-list">
-                    <p class="text-gray-500 text-center py-8">Keine aktive Bestandsaufnahme. Klicken Sie auf "Neue Aufnahme starten"</p>
-                </div>
-            </div>
-        </div>
+    <!-- -------------------------------
+         ✅ TAB: ARTIKEL HINZUFÜGEN
+         (Platzhalter mit Barcode Prefill)
+    ---------------------------------->
+    <div id="add-item-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">➕ Neuer Artikel</h2>
+        <p class="text-gray-500">TODO: Formular erstellen (Name, Barcode, Preis, Kategorie, Dauer etc.).</p>
+      </div>
+    </div>
 
-        <div id="add-item-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">➕ Neuen Artikel hinzufügen</h2>
-                <form id="add-item-form" class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Artikelname *</label>
-                        <input type="text" id="item-name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Barcode *</label>
-                        <input type="text" id="item-barcode" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Anzahl *</label>
-                        <input type="number" id="item-quantity" required min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Preis (€) *</label>
-                        <input type="number" id="item-price" required min="0" step="0.01" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
-                        <select id="item-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="Raketen">🚀 Raketen</option>
-                            <option value="Batterien">🔋 Batterien</option>
-                            <option value="Römische Lichter">💡 Römische Lichter</option>
-                            <option value="Fontänen">⛲ Fontänen</option>
-                            <option value="Bengalos">🔥 Bengalos</option>
-                            <option value="Knaller">💥 Knaller</option>
-                            <option value="Verbundfeuerwerk">🎆 Verbundfeuerwerk</option>
-                            <option value="Sonstiges">📦 Sonstiges</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Mindestbestand</label>
-                        <input type="number" id="item-min-stock" min="0" value="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    </form>
-            </div>
-        </div>
-        </div>
+    <!-- -------------------------------
+         ✅ TAB: CODE GENERATOR
+    ---------------------------------->
+    <div id="code-generator-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">🏷️ Code Generator</h2>
+        <p class="text-gray-500">TODO: QR-/Barcode für Artikel generieren (JsBarcode & QRCode sind schon eingebunden).</p>
+      </div>
+    </div>
+
+    <!-- -------------------------------
+         ✅ TAB: IMPORT
+    ---------------------------------->
+    <div id="import-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📥 Daten importieren</h2>
+        <p class="text-gray-500">TODO: CSV/Excel Upload implementieren.</p>
+      </div>
+    </div>
+
+    <!-- -------------------------------
+         ✅ TAB: BERICHTE
+    ---------------------------------->
+    <div id="reports-tab" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Berichte</h2>
+        <p class="text-gray-500">TODO: Diagramme über Lagerbestand, Kategorien, Werte anzeigen.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- -------------------------------
+       ✅ JAVASCRIPT
+  ---------------------------------->
+  <script>
+    // 👉 Hier habe ich dir die wichtigsten Funktionen eingebaut
+    // Jeder Block ist kommentiert und TODOs sind markiert
+
+    /* 🔒 Sicherheitsfunktion gegen XSS */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"'`=\/]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;','/':'&#47;','=':'&#61;'})[s]);
+    }
+
+    /* 🔔 Notifications */
+    function showNotification(message, type='info') {
+      const container = document.getElementById('notification-container');
+      const n = document.createElement('div');
+      n.className = `notification ${type}`;
+      n.textContent = message;
+      container.appendChild(n);
+      setTimeout(()=> n.classList.add('show'), 50);
+      setTimeout(()=> { n.classList.remove('show'); setTimeout(()=> container.removeChild(n), 350); }, 3000);
+    }
+
+    /* 📦 Inventar Speicher */
+    let inventory = [];
+    function loadDefaultData(){
+      inventory = [
+        { id:1, name:"Silvester Rakete Premium", barcode:"1234567890123", quantity:50, price:2.99, category:"Raketen", minStock:10, description:"Bunte Silvester Rakete", image:"🚀", duration:15, effect:"Goldene Funken", photo:null },
+        { id:2, name:"Feuerwerk Batterie 20-Schuss", barcode:"2345678901234", quantity:25, price:15.99, category:"Batterien", minStock:5, description:"20-Schuss Batterie", image:"🔋", duration:45, effect:"Bunte Sterne", photo:null },
+        { id:3, name:"Römisches Licht Deluxe", barcode:"3456789012345", quantity:8, price:8.50, category:"Römische Lichter", minStock:15, description:"Mehrfarbiges Römisches Licht", image:"💡", duration:30, effect:"Regenbogen", photo:null }
+      ];
+      saveInventory();
+    }
+    function saveInventory(){
+      try { localStorage.setItem('pyrotechnikInventory', JSON.stringify(inventory)); document.getElementById('sync-status').textContent = '💾 Gespeichert'; return true; }
+      catch(e){ console.error(e); showNotification('Fehler beim Speichern','error'); return false; }
+    }
+    try {
+      const raw = localStorage.getItem('pyrotechnikInventory');
+      if (raw) inventory = JSON.parse(raw);
+      if (!Array.isArray(inventory) || inventory.length === 0) loadDefaultData();
+    } catch (e) { console.error(e); loadDefaultData(); showNotification('Standarddaten geladen','info'); }
+
+    /* 📑 Tab-Wechsel */
+    function showTab(name){
+      document.querySelectorAll('.tab-content').forEach(el=> el.classList.add('hidden'));
+      const id = {scanner:'scanner-tab', inventory:'inventory-tab', stocktaking:'stocktaking-tab', 'add-item':'add-item-tab', 'code-generator':'code-generator-tab', import:'import-tab', reports:'reports-tab'}[name];
+      document.getElementById(id).classList.remove('hidden');
+      document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.classList.remove('text-blue-600','border-b-2','border-blue-600'));
+      document.getElementById('tab-'+name).classList.add('text-blue-600','border-b-2','border-blue-600');
+      updateAllViews();
+    }
+    function updateAllViews(){ updateInventoryTable(); }
+
+    /* 📋 Inventar Tabelle */
+    function updateInventoryTable(){
+      const tbody = document.getElementById('inventory-table');
+      if (!tbody) return;
+      const q = (document.getElementById('search-inventory')?.value || '').toLowerCase();
+      const filtered = inventory.filter(i => (i.name||'').toLowerCase().includes(q) || (i.barcode||'').includes(q) || (i.category||'').toLowerCase().includes(q) || (i.description||'').toLowerCase().includes(q));
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-gray-500">${q ? 'Keine Artikel gefunden' : 'Keine Artikel im Inventar'}</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = filtered.map(item => {
+        const quantity = item.quantity || 0;
+        const minStock = item.minStock || 0;
+        const stockStatus = quantity <= minStock ? 'text-red-600' : 'text-green-600';
+        const statusBadge = quantity <= minStock ? 'bg-red-100 text-red-800' : quantity > minStock*2 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+        const statusText = quantity <= minStock ? 'Niedrig' : quantity > minStock*2 ? 'Gut' : 'Normal';
+        return `<tr>
+          <td class="px-4 py-3">${item.photo ? `<img src="${item.photo}" class="image-preview" alt="${escapeHtml(item.name)}">` : `<span class="text-2xl">${escapeHtml(item.image || '📦')}</span>`}</td>
+          <td class="px-4 py-3">${escapeHtml(item.name)}<br><span class="text-sm text-gray-500">${escapeHtml(item.category||'')}</span></td>
+          <td class="px-4 py-3"><div class="text-sm font-mono bg-gray-100 px-2 py-1 rounded">${escapeHtml(item.barcode||'')}</div></td>
+          <td class="px-4 py-3"><span class="font-bold ${stockStatus}">${quantity}</span></td>
+          <td class="px-4 py-3">€${(item.price||0).toFixed(2)}</td>
+          <td class="px-4 py-3">${item.duration||0}s</td>
+          <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full ${statusBadge}">${statusText}</span></td>
+          <td class="px-4 py-3"><button onclick="adjustStock(${item.id}, -1)" class="bg-red-500 text-white px-3 py-1 rounded">-1</button> <button onclick="adjustStock(${item.id}, 1)" class="bg-green-500 text-white px-3 py-1 rounded">+1</button></td>
+        </tr>`;
+      }).join('');
+    }
+
+    /* ➕ Bestand ändern */
+    function adjustStock(itemId, change) {
+      const it = inventory.find(i=> i.id === itemId);
+      if(!it) return;
+      it.quantity = Math.max(0, (it.quantity||0) + change);
+      saveInventory();
+      updateAllViews();
+      showNotification(`${change>0?'+':''}${change} Stück geändert bei ${it.name}`,'success');
+    }
+
+    /* 📤 CSV Export */
+    function exportInventory(){
+      const csv = 'Name,Barcode,Anzahl,Preis,Kategorie\\n' + inventory.map(i => `"${i.name}","${i.barcode}",${i.quantity},${i.price},"${i.category}"`).join('\\n');
+      const link = document.createElement('a');
+      link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      link.download = `inventar_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      showNotification('Inventar exportiert','success');
+    }
+
+    /* ☁️ Cloud (Platzhalter) */
+    function exportToCloud(){ showNotification('Backup (Platzhalter)','info'); }
+    function importFromCloud(){ showNotification('Backup laden (Platzhalter)','info'); }
+
+    /* 📷 Kamera Scanner */
+    let cameraStream=null, codeReader=null, isScanning=false;
+    async function toggleCamera(){
+      const video=document.getElementById('camera-video'),placeholder=document.getElementById('scanner-placeholder'),overlay=document.getElementById('scan-overlay'),toggleBtn=document.getElementById('camera-toggle');
+      if(!isScanning){
+        try{
+          cameraStream=await navigator.mediaDevices.getUserMedia({ video:{facingMode:'environment'}});
+          video.srcObject=cameraStream; video.classList.remove('hidden'); placeholder.classList.add('hidden'); overlay.classList.remove('hidden');
+          toggleBtn.textContent='⏹️ Kamera stoppen'; isScanning=true;
+          if(!codeReader) codeReader=new ZXing.BrowserMultiFormatReader();
+          codeReader.decodeFromVideoDevice(null, video, (result)=>{ if(result){ document.getElementById('barcode-input').value=result.text; scanBarcode(); }});
+        }catch(e){ showNotification('Kamera nicht verfügbar','error'); }
+      }else{
+        cameraStream.getTracks().forEach(t=>t.stop());
+        codeReader.reset();
+        video.classList.add('hidden'); placeholder.classList.remove('hidden'); overlay.classList.add('hidden');
+        toggleBtn.textContent='📷 Kamera starten'; isScanning=false;
+      }
+    }
+
+    /* 🖼️ Foto Upload (Platzhalter) */
+    function scanBarcodeFromImage(e){ showNotification('Bild-Scan noch nicht implementiert','info'); }
+
+    /* 🔎 Barcode Suche */
+    function scanBarcode(){
+      const val=(document.getElementById('barcode-input')?.value||'').trim();
+      if(!val) return showNotification('Bitte Barcode eingeben','error');
+      const item=inventory.find(i=>i.barcode===val);
+      const resultDiv=document.getElementById('scan-result');
+      if(item){
+        resultDiv.innerHTML=`<div><b>${escapeHtml(item.name)}</b><br>Bestand: ${item.quantity}<br>Preis: €${item.price}</div>`;
+        showNotification('Artikel gefunden','success');
+      }else{
+        resultDiv.innerHTML=`<div class="text-red-600">❌ Artikel nicht gefunden<br>${escapeHtml(val)}</div>`;
+        showNotification('Artikel nicht gefunden','error');
+      }
+      document.getElementById('barcode-input').value='';
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{ showTab('scanner'); updateAllViews(); });
+  </script>
 </body>
 </html>
